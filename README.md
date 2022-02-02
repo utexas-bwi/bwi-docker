@@ -14,7 +14,7 @@ You might also install the CUDA toolkit with `sudo apt install nvidia-cuda-toolk
 
 ## Install
 
-Clone the repo into a useful directory, eg /home/<user>.
+Clone the repo into a useful directory, eg `/home/<user>`.
 ```
 git clone https://github.com/utexas-bwi/bwi-docker.git
 ```
