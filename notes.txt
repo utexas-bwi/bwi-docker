@@ -1,0 +1,6 @@
+
+
+    devices:
+    # TODO map bwibot devices
+      - "/dev/bus/usb/002/003:/dev/bus/usb/002/003"
+      - "/dev/bus/usb/002/004:/dev/bus/usb/002/004"
