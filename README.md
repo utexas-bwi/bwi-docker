@@ -5,6 +5,7 @@
 - NVIDIA graphics card and drivers
 - Docker
 - Docker-Compose
+- [Nvidia Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker)
 
 This package is designed for use with Ubuntu OS and systems having NVIDIA graphics cards using NVIDIA drivers.  Please be sure to setup your drivers according to the article linked here under the heading [**Install Nvidia Driver Using GUI**](https://phoenixnap.com/kb/install-nvidia-drivers-ubuntu).  Do not forget to register the MOK on reboot (this option will appear in BIOS before the OS loads), otherwise the drivers will not be allowed to load.
 
