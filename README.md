@@ -1,6 +1,11 @@
 
 ## Requirements
 
+- Ubuntu OS
+- NVIDIA graphics card and drivers
+- Docker
+- Docker-Compose
+
 This package is designed for use with Ubuntu OS and systems having NVIDIA graphics cards using NVIDIA drivers.  Please be sure to setup your drivers according to the article linked here under the heading [**Install Nvidia Driver Using GUI**](https://phoenixnap.com/kb/install-nvidia-drivers-ubuntu).  Do not forget to register the MOK on reboot (this option will appear in BIOS before the OS loads), otherwise the drivers will not be allowed to load.
 
 Verify whether you have NVIDIA drivers loaded with the command `nvidia-smi`.  If you do not, it will return an error.
@@ -9,11 +14,10 @@ You might also install the CUDA toolkit with `sudo apt install nvidia-cuda-toolk
 
 ## Install
 
-Clone the repo into, for instance, your home directory.
+Clone the repo into a useful directory, eg /home/<user>.
 ```
 git clone https://github.com/utexas-bwi/bwi-docker.git
 ```
-
 
 ## Build
 
