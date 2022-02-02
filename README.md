@@ -33,17 +33,17 @@ xhost +local:docker
 
 ## Run ROS and the BWI stack in Docker
 
-From the docker image directory, run the following command to start up the roscore process in the Docker container `bwiros`:
+Run the following command to start up the roscore process in the Docker container `bwiros`:
 ```
 sudo docker-compose up
 ```
 
-In a new terminal on the host, open a pseudo bash terminal in the container `bwiros` with:
+In a new terminal on the host, open a pseudo-tty bash terminal in the container `bwiros` with:
 ```
 sudo docker exec -ti bwiros bash
 ```
 
-In this psudo terminal you can run ROS commands.  Do these below to run the standard demo, visit doors in AHG.
+In this psudo-tty you can run ROS commands.  Do these below to run the standard demo, visit doors in AHG.
 ```
 roslaunch bwi_launch segbot_v4_ahg.launch
 ```
