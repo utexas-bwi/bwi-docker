@@ -7,10 +7,17 @@ Verify whether you have NVIDIA drivers loaded with the command `nvidia-smi`.  If
 
 You might also install the CUDA toolkit with `sudo apt install nvidia-cuda-toolkit`.
 
+## Install
+
+Clone the repo into, for instance, your home directory.
+```
+git clone https://github.com/utexas-bwi/bwi-docker.git
+```
+
 
 ## Build
 
-Build the Docker image:
+From inside the `bwi-docker` directory, build the Docker image:
 ```
 sudo docker-compose build
 ```
