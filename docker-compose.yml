@@ -1,41 +1,47 @@
 version: "3"
 
 services:
-  app:
+  ros:
     runtime: nvidia
     image: bwiros:latest
-    container_name: bwiros
+    #container_name: bwiros
     build:
-      context: .
+      context: ./ros
       dockerfile: Dockerfile
-    security_opt:
-      - apparmor:unconfined
     environment:
       # these env variables enable use of the display and GPU
       - DISPLAY=${DISPLAY}
       - NVIDIA_VISIBLE_DEVICES=all
       - NVIDIA_DRIVER_CAPABILITIES=all
-      # this allows application of udev rules needed for usb dev access
-      - UDEV=1
-      # some segbot variables
-      - ROS_DISTRO=melodic
-      - SEGWAY_INTERFACE_ADDRESS=10.66.171.1
-      - SEGWAY_IP_ADDRESS=10.66.171.5
-      - SEGWAY_IP_PORT_NUM=8080
-      - SEGWAY_BASE_PLATFORM=RMP_110
-      - SEGWAY_PLATFORM_NAME=RMP_110
-    volumes:
-    # volumes allow persistent data on the host
-      # share some graphics related directories
-      - /tmp/.X11-unix:/tmp/.X11-unix
+      - QT_X11_NO_MITSHM=1
+    volumes: # volumes allow persistent data on the host
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - /usr/local/cuda:/usr/local/cuda
-      # bwi_common postgres database home
-      - ./volumes/var/lib/postgresql:/var/lib/postgresql
-      # Persist data in the host user's space
-      - ./volumes/home/bwilab:/home/bwilab
+    network_mode: host # use the host network
+
+  bwi-base:
+    runtime: nvidia
+    image: bwibase
+    build:
+      context: ./bwi-base
+      dockerfile: Dockerfile
+    depends_on:
+      - ros
+    environment:
+      # these env variables enable use of the display and GPU
+      - DISPLAY=${DISPLAY}
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=all
+      - QT_X11_NO_MITSHM=1
+    volumes: # volumes allow persistent data on the host
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - /usr/local/cuda:/usr/local/cuda
+      - ../volumes/home/bwilab/catkin_ws:/home/bwilab/catkin_ws
+      - ../volumes/var/lib/postgresql:/var/lib/postgresql
+    # give the container access to the host's network
     network_mode: host
+    # these usb device names are defined on the host using udev rules
     devices:
-    # TODO : give access to usb devices
-      # these device names are defined by udev rules on host
       - /dev/hokuyo:/dev/hokuyo
       - /dev/segway_rmp:/dev/segway_rmp
+    
