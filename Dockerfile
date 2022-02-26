@@ -9,11 +9,8 @@ LABEL com.nvidia.volumes.needed="nvidia_driver"
 
 # set non-interactive shell for all this installation
 ENV DEBIAN_FRONTEND noninteractive
-
 # set the ros version
 ENV ROS_DISTRO melodic
-# update install resources to latest
-RUN sudo apt-get update
 
 # setup the non-root user
 RUN useradd --create-home --shell /bin/bash bwilab
@@ -22,6 +19,14 @@ RUN sudo usermod --append --groups sudo,dialout bwilab
 RUN echo 'bwilab ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 # switch user
 USER bwilab
+
+# update install resources to latest
+RUN sudo apt-get update
+RUN sudo apt-get -y install apt-utils python-pip \
+    ros-melodic-desktop-full python-rosdep python-rosinstall \
+    python-rosinstall-generator python-wstool build-essential
+# get a missing dependency for the database
+RUN pip install -U pyYAML
 
 # create a ROS catkin_ws
 WORKDIR /home/bwilab
@@ -39,8 +44,7 @@ RUN source /opt/ros/$ROS_DISTRO/setup.bash && \
 WORKDIR /home/bwilab/catkin_ws/src/bwi_common && \
     git submodule init &&\
     git submodule update
-# get a missing dependency for the database
-RUN pip install -U pyYAML
+
 # install some more new repos (TODO- add these to melodic-docker.rosinstall)
 WORKDIR /home/bwilab/catkin_ws/src
 RUN git clone --branch ahg2s_map https://github.com/utexas-bwi/ahg_common.git
@@ -59,6 +63,7 @@ ENV SEGWAY_IP_PORT_NUM=8080
 ENV SEGWAY_BASE_PLATFORM=RMP_110
 ENV SEGWAY_PLATFORM_NAME=RMP_110
 
+USER postgres
 # set the password for postgresql db
 RUN  /etc/init.d/postgresql start &&\
     psql -c "ALTER USER postgres WITH PASSWORD 'nopass'" &&\
@@ -66,12 +71,13 @@ RUN  /etc/init.d/postgresql start &&\
 	psql -d knowledge_base -f /home/bwilab/catkin_ws/src/bwi_common/knowledge_representation/sql/schema_postgresql.sql &&\
 	/etc/init.d/postgresql stop
 
+USER bwilab
 # create a mount point for the db
 VOLUME /var/lib/postgresql
 # create a mount point for the catkin_ws
 VOLUME /home/bwilab/catkin_ws
 
 # copy the entrypoint into the image
-COPY ./bwibase_entrypoint.sh /
+COPY ./bwibase_entrypoint.sh /bwibase_entrypoint.sh
 # run this script on startup
-ENTRYPOINT [bwibase_entrypoint.sh]
+ENTRYPOINT ["/bwibase_entrypoint.sh"]

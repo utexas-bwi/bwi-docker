@@ -1,32 +1,15 @@
 version: "3"
 
 services:
-  ros:
-    runtime: nvidia
-    image: bwiros:latest
-    #container_name: bwiros
-    build:
-      context: ./ros
-      dockerfile: Dockerfile
-    environment:
-      # these env variables enable use of the display and GPU
-      - DISPLAY=${DISPLAY}
-      - NVIDIA_VISIBLE_DEVICES=all
-      - NVIDIA_DRIVER_CAPABILITIES=all
-      - QT_X11_NO_MITSHM=1
-    volumes: # volumes allow persistent data on the host
-      - /tmp/.X11-unix:/tmp/.X11-unix:rw
-      - /usr/local/cuda:/usr/local/cuda
-    network_mode: host # use the host network
-
   bwi-base:
     runtime: nvidia
     image: bwibase
+    container_name: bwi-base_c
     build:
-      context: ./bwi-base
+      context: .
       dockerfile: Dockerfile
-    depends_on:
-      - ros
+    security_opt:
+      - apparmor:unconfined
     environment:
       # these env variables enable use of the display and GPU
       - DISPLAY=${DISPLAY}
@@ -36,8 +19,8 @@ services:
     volumes: # volumes allow persistent data on the host
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - /usr/local/cuda:/usr/local/cuda
-      - ../volumes/home/bwilab/catkin_ws:/home/bwilab/catkin_ws
-      - ../volumes/var/lib/postgresql:/var/lib/postgresql
+      #- /volumes/home/bwilab/catkin_ws:/home/bwilab/catkin_ws
+      #- /volumes/var/lib/postgresql:/var/lib/postgresql
     # give the container access to the host's network
     network_mode: host
     # these usb device names are defined on the host using udev rules
