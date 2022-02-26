@@ -1,22 +1,29 @@
 version: "3"
 
 services:
-  app:
+  bwibase_s:
     runtime: nvidia
-    image: bwidemo:latest
-    container_name: bwiros
-    build: .
+    image: bwibase_i
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bwibase_c
+    # this is set bc of errors with RViz being denied dbus comm w/ host
+    security_opt:
+      - apparmor:unconfined
     environment:
       # these env variables enable use of the display and GPU
       - DISPLAY=${DISPLAY}
       - NVIDIA_VISIBLE_DEVICES=all
       - NVIDIA_DRIVER_CAPABILITIES=all
+      - QT_X11_NO_MITSHM=1
     volumes: # volumes allow persistent data on the host
       - /tmp/.X11-unix:/tmp/.X11-unix
       - /usr/local/cuda:/usr/local/cuda
-      # Uncomment the line below to persist data in the host user's space
-      #- /home/bwilab:/home/bwilab
-    network_mode: host # use the host network
-    privileged: true
-
-# TODO map bwibot devices
+    # give the container access to the host's network
+    network_mode: host
+    # these usb device names are defined on the host using udev rules
+    devices:
+      - /dev/hokuyo:/dev/hokuyo
+      - /dev/segway_rmp:/dev/segway_rmp
+    
