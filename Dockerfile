@@ -22,35 +22,27 @@ USER bwilab
 
 # update install resources to latest
 RUN sudo apt-get update
-RUN sudo apt-get -y install apt-utils python-pip \
+RUN sudo apt-get -y install apt-utils python-pip nano vim tmux \
     ros-melodic-desktop-full python-rosdep python-rosinstall \
     python-rosinstall-generator python-wstool build-essential
-# get a missing dependency for the database
 RUN pip install -U pyYAML
 
 # create a ROS catkin_ws
 WORKDIR /home/bwilab
 RUN mkdir -p catkin_ws/src
-WORKDIR /home/bwilab/catkin_ws
+ENV WORKSPACE /home/bwilab/catkin_ws
+WORKDIR $WORKSPACE
 
 # these ROS commands must be executed in the same "RUN" process as a "source" command,
 # or use `RUN /ros_entrypoint.sh command`
 RUN source /opt/ros/$ROS_DISTRO/setup.bash && \
-    wstool init src https://raw.githubusercontent.com/utexas-bwi/bwi/master/rosinstall/$ROS_DISTRO.rosinstall &&\
+    wstool init src https://raw.githubusercontent.com/utexas-bwi/bwi/master/rosinstall/melodic_docker.rosinstall &&\
     source /opt/ros/$ROS_DISTRO/setup.bash && \
     rosdep update &&\
     rosdep install --from-paths src --ignore-src --rosdistro $ROS_DISTRO -y
-# make sure the repo submodules are installed
-WORKDIR /home/bwilab/catkin_ws/src/bwi_common && \
-    git submodule init &&\
-    git submodule update
 
-# install some more new repos (TODO- add these to melodic-docker.rosinstall)
-WORKDIR /home/bwilab/catkin_ws/src
-RUN git clone --branch ahg2s_map https://github.com/utexas-bwi/ahg_common.git
-RUN git clone https://github.com/utexas-bwi/bwi_robofleet.git
 # finally build the bwi code base
-WORKDIR /home/bwilab/catkin_ws
+WORKDIR $WORKSPACE
 RUN source /opt/ros/$ROS_DISTRO/setup.bash && \
     catkin build
 
@@ -63,19 +55,25 @@ ENV SEGWAY_IP_PORT_NUM=8080
 ENV SEGWAY_BASE_PLATFORM=RMP_110
 ENV SEGWAY_PLATFORM_NAME=RMP_110
 
-USER postgres
 # set the password for postgresql db
+USER postgres
 RUN  /etc/init.d/postgresql start &&\
     psql -c "ALTER USER postgres WITH PASSWORD 'nopass'" &&\
     createdb knowledge_base &&\
-	psql -d knowledge_base -f /home/bwilab/catkin_ws/src/bwi_common/knowledge_representation/sql/schema_postgresql.sql &&\
+	psql -d knowledge_base -f $WORKSPACE/src/bwi_common/knowledge_representation/sql/schema_postgresql.sql &&\
 	/etc/init.d/postgresql stop
 
 USER bwilab
-# create a mount point for the db
-VOLUME /var/lib/postgresql
-# create a mount point for the catkin_ws
-VOLUME /home/bwilab/catkin_ws
+
+# update bashrc (warn: dockerfile ENV variables do not work in echo text)
+RUN echo -e '\
+source /opt/ros/melodic/setup.bash\n\
+source /home/bwilab/catkin_ws/devel/setup.bash\n\
+export SEGWAY_INTERFACE_ADDRESS=10.66.171.1\n\
+export SEGWAY_IP_ADDRESS=10.66.171.5\n\
+export SEGWAY_IP_PORT_NUM=8080\n\
+export SEGWAY_BASE_PLATFORM=RMP_110\n\
+export SEGWAY_PLATFORM_NAME=RMP_110' >> ~/.bashrc
 
 # copy the entrypoint into the image
 COPY ./bwibase_entrypoint.sh /bwibase_entrypoint.sh
