@@ -1,10 +1,12 @@
 This package enables running the BWI code stack on machines running Ubuntu 20.04.03 LTS+.  It creates a Docker image and container that can control a V4 BWIbot.
 
 # Table of Contents
+
 [Getting Started](#getting-started)
 - [Requirements](#requirements)
 - [Install](#install)
 - [Build](#build)
+
 [Usage](#usage)
 - [Run ROS and the BWI stack in Docker](#run-ros-and-the-bwi-stack-in-docker)
 [Resources](#resources)
