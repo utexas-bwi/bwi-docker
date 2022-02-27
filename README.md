@@ -59,16 +59,17 @@ In a new terminal window, open a bash terminal inside the container we just crea
 ```
 sudo docker exec -ti bwibase_c bash
 ```
+
+In this Docker container shell session you can run ROS commands.
+
 For simplicity, the remaining instructions assume using Docker commands to open new shell sessions in the container for each process.  However, this is where using `tmux` can be really handy.  See the [Resources](#resources) section below.
 
-In this Docker container shell session you can run ROS commands.  Do these below to run the standard demo `visit doors` in AHG.
+Run the standard [visit doors demo in AHG](https://github.com/utexas-bwi/bwi/blob/master/demo_v4.md) with the following commands.  Source your workspace with `source ~/.bashrc` if you run into any errors.
 ```
 roslaunch bwi_launch segbot_v4_ahg.launch
 ```
 
-If you run into any errors, source your workspace with `source ~/.bashrc` and try your commands again.
-
-Open another terminal in the container with `sudo docker exec -ti bwibase_c bash`, and then run the `visit doors` demo with:
+Open another terminal in the container with `sudo docker exec -ti bwibase_c bash`, and then run the AHG visit doors demo with:
 
 ```
 rosrun bwi_tasks visit_door_list_smach
