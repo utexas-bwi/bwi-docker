@@ -9,29 +9,29 @@ LABEL com.nvidia.volumes.needed="nvidia_driver"
 
 # set non-interactive shell for all this installation
 ENV DEBIAN_FRONTEND noninteractive
-# set the ros version
-ENV ROS_DISTRO melodic
 
 # setup the non-root user
-RUN useradd --create-home --shell /bin/bash bwilab
-RUN sudo usermod --append --groups sudo,dialout bwilab
-# give permission to run sudo w/ out pw prompts
-RUN echo 'bwilab ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+RUN useradd --create-home --shell /bin/bash bwilab &&\
+    usermod --append --groups sudo,dialout bwilab &&\
+    # give permission to run sudo w/ out pw prompts
+    echo 'bwilab ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 # switch user
 USER bwilab
 
 # update install resources to latest
-RUN sudo apt-get update
-RUN sudo apt-get -y install apt-utils python-pip nano vim tmux \
+RUN sudo apt-get update &&\
+    sudo apt-get -y install apt-utils python-pip nano vim tmux \
     ros-melodic-desktop-full python-rosdep python-rosinstall \
-    python-rosinstall-generator python-wstool build-essential
-RUN pip install -U pyYAML
+    python-rosinstall-generator python-wstool build-essential &&\
+    pip install -U pyYAML
 
 # create a ROS catkin_ws
 WORKDIR /home/bwilab
 RUN mkdir -p catkin_ws/src
 ENV WORKSPACE /home/bwilab/catkin_ws
 WORKDIR $WORKSPACE
+# set the ros version
+ENV ROS_DISTRO melodic
 
 # these ROS commands must be executed in the same "RUN" process as a "source" command,
 # or use `RUN /ros_entrypoint.sh command`

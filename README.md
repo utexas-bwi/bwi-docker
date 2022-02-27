@@ -84,6 +84,26 @@ When finished, `exit` to exit the container bash session, and then stop and remo
 ```
 sudo docker-compose down
 ```
+
+# Development
+
+In order to test new packages on the BWI code base, a development workspace, `dev_ws`, is created in `volumes/` that persists on the host when a docker container is closed.  This workspace must be configured before it can be used.
+
+First, you may need to change the permissions on the directory on the host bc it was created with root permissions by docker.  From the main `bwi-docker` directory, run the command below.  The `<username>` and `<groupname>` are both the name of your user on the host machine, ie `bwiuser:bwiuser`.  BE AWARE THAT THE ABOVE COMMAND CHANGES PERMISSIONS FOR EVERYTHING IN VOLUMES because of the `-R` flag.  If you add other volumes that need different permissions, be sure not to change them recursively.
+```
+sudo chown -R <username>:<groupname> volumes
+```
+Next navigate to the `dev_ws` **inside the container** to source the main workspace before building your development workspace.  This ensures you are including all the settings from the main `catkin_ws`.
+```
+cd /home/bwilab/dev_ws
+mkdir src
+source ~/.bashrc
+catkin build
+```
+If it builds correctly, you will see new directores `build` and `devel`.  Then when you want to use the `dev_ws`, source it with
+```
+source /home/bwilab/dev_ws/devel/setup.bash
+```
 ____________
 
 # Resources
