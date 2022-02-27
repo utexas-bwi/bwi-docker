@@ -1,6 +1,6 @@
 This package enables the BWI code stack on machines running Ubuntu 20.04.03 LTS+.  It creates a Docker image and container that can control a V4 BWIbot.
 
-# Table of Contents
+### Table of Contents
 
 [Getting Started](#getting-started)
 - [Requirements](#requirements)
