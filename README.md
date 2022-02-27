@@ -93,7 +93,7 @@ ____________
 - [Docker Reference](https://docs.docker.com/reference/)
 
 
-## Using tmux to run terminal sessions in the background of a container
+## Using tmux to run multiple terminal sessions in a container
 
 
 **tmux** is a great tool for working in terminal, especially with a remote host like ssh or a docker container.  It allows users to run multiple shell sessions in the background, rather than opening a new terminal on your host and logging in to a shell session on the remote every time you want to run a new process.
