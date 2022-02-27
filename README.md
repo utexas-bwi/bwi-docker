@@ -9,6 +9,7 @@ This package enables running the BWI code stack on machines running Ubuntu 20.04
 
 [Usage](#usage)
 - [Run ROS and the BWI stack in Docker](#run-ros-and-the-bwi-stack-in-docker)
+
 [Resources](#resources)
 - [Learning and Reference](#learning-and-reference)
 - [Using tmux](#using-tmux-to-run-terminal-sessions-in-the-background-of-a-container)
@@ -58,14 +59,15 @@ In a new terminal window, open a bash terminal inside the container we just crea
 ```
 sudo docker exec -ti bwibase_c bash
 ```
-
-At this point, its recommended to use `tmux` to run multiple shell windows inside the container.  See below. For simplicity, the remaining instructions assume **not** using `tmux`, instead using Docker commands to open a new shell session in the container for each process.
+For simplicity, the remaining instructions assume using Docker commands to open new shell sessions in the container for each process.  However, this is where using `tmux` can be really handy.  See the [Resources](#resources) section below.
 
 In this Docker container shell session you can run ROS commands.  Do these below to run the standard demo `visit doors` in AHG.
 ```
 roslaunch bwi_launch segbot_v4_ahg.launch
 ```
-If you run into an error that
+
+If you run into any errors, source your workspace with `source ~/.bashrc` and try your commands again.
+
 Open another terminal in the container with `sudo docker exec -ti bwibase_c bash`, and then run the `visit doors` demo with:
 
 ```
