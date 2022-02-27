@@ -96,7 +96,7 @@ ____________
 ## Using tmux to run multiple terminal sessions in a container
 
 
-**tmux** is a great tool for working in terminal, especially with a remote host like ssh or a docker container.  It allows users to run multiple shell sessions in the background, rather than opening a new terminal on your host and logging in to a shell session on the remote every time you want to run a new process.
+**tmux** is a great tool for working in terminal, especially with a remote host like ssh or a docker container.  It allows users to run multiple shell sessions in the background or in panes, rather than opening a new terminal on your host and logging in to a shell session on the remote every time you want to run a new process.
 
 Start a tmux session by typing `tmux` to start a numbered session, or give it a name with:
 ```
