@@ -48,6 +48,11 @@ xhost +local:docker
 # Usage
 ## Run ROS and the BWI stack in Docker
 
+If you haven't already since your last logout, add the `docker` user to the xhost users.  This has to be done only once after a user logs in, but doesn't persist after a logout.
+```
+xhost +local:docker
+```
+
 Run the following command to start up a detached container called `bwibase_c` using the service `bwibase_s` defined in `docker-compose.yml`:
 ```
 sudo docker-compose run -d --name bwibase_c bwibase_s
