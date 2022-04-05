@@ -24,7 +24,8 @@ USER bwilab
 RUN sudo apt-get update
 RUN sudo apt-get -y install apt-utils python-pip nano vim tmux \
     ros-melodic-desktop-full python-rosdep python-rosinstall \
-    python-rosinstall-generator python-wstool build-essential
+    python-rosinstall-generator python-wstool build-essential \
+    libqt5websockets5-dev qt5-default
 RUN pip install -U pyYAML
 
 # create a ROS catkin_ws
