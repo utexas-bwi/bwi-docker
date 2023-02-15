@@ -7,7 +7,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: bwibase_c
+    container_name: bwibase_justin
     # this is set bc of errors with RViz being denied dbus comm w/ host
     security_opt:
       - apparmor:unconfined
@@ -24,7 +24,7 @@ services:
     network_mode: host
     # these usb device names are defined on the host using udev rules
     # comment out these lines if you are running without devices connected.
-    devices:
-      - /dev/hokuyo:/dev/hokuyo
-      - /dev/segway_rmp:/dev/segway_rmp
+    # devices:
+    #  - /dev/hokuyo:/dev/hokuyo
+    #  - /dev/segway_rmp:/dev/segway_rmp
     
