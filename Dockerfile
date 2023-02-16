@@ -12,6 +12,23 @@ ENV DEBIAN_FRONTEND noninteractive
 # set the ros version
 ENV ROS_DISTRO melodic
 
+# add the ROS deb repo to the apt sources list (needed to install ROS)
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+          git \
+                sudo \
+                cmake \
+                build-essential \
+                curl \
+                wget \
+                gnupg2 \
+                lsb-release \
+                ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+    
+RUN sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
+RUN curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | apt-key add -
+
 # setup the non-root user
 RUN useradd --create-home --shell /bin/bash bwilab
 RUN sudo usermod --append --groups sudo,dialout bwilab
