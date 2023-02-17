@@ -99,7 +99,7 @@ mkdir src
 source ~/.bashrc
 catkin build
 ```
-If it builds correctly, you will see new directores `build` and `devel`.  Then when you want to use the `dev_ws`, source it with
+If it builds correctly, you will see new directores `build` and `devel`.  Then when you want to use the `dev_ws`, source it as below.
 ```
 source /home/bwilab/dev_ws/devel/setup.bash
 ```
