@@ -1,31 +1,31 @@
 version: "3"
 
 services:
-  bwibase_s:
+  bwi_system_s:
     runtime: nvidia
-    image: bwibase_i
+    image: bwi_system_i
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: bwibase_c
+    container_name: bwi_system_c
     # this is set bc of errors with RViz being denied dbus comm w/ host
     security_opt:
       - apparmor:unconfined
-    environment:
+    #environment:
       # these env variables enable use of the display and GPU
-      - DISPLAY=${DISPLAY}
-      - NVIDIA_VISIBLE_DEVICES=all
-      - NVIDIA_DRIVER_CAPABILITIES=all
-      - QT_X11_NO_MITSHM=1
+      # - DISPLAY=${DISPLAY}
+      # - NVIDIA_VISIBLE_DEVICES=all
+      # - NVIDIA_DRIVER_CAPABILITIES=all
+      # - QT_X11_NO_MITSHM=1
     volumes: # volumes allow persistent data on the host
-      - /tmp/.X11-unix:/tmp/.X11-unix
-      - /usr/local/cuda:/usr/local/cuda
+      # - /tmp/.X11-unix:/tmp/.X11-unix
+      # - /usr/local/cuda:/usr/local/cuda
       # create a workspace for development
-      - ./volumes/dev_ws:/home/bwilab/dev_ws
+      - ./ws:/home/${USER}/ws
     # give the container access to the host's network
     network_mode: host
     # these usb device names are defined on the host using udev rules
-    devices:
-      - /dev/hokuyo:/dev/hokuyo
-      - /dev/segway_rmp:/dev/segway_rmp
+    #devices:
+      # - /dev/hokuyo:/dev/hokuyo
+      # - /dev/segway_rmp:/dev/segway_rmp
     
