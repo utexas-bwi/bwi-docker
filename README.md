@@ -29,46 +29,60 @@ This package is designed for use with Ubuntu OS and systems having NVIDIA graphi
 
 ## Install
 
-Clone the repo into a useful directory, eg `/home/<user>/`.
+Clone the repo into a useful directory, eg `/home/<your user>/`.  Checkout the "system_only" branch.
 ```
 git clone https://github.com/utexas-bwi/bwi-docker.git
+git checkout system_only
 ```
+## Pull the system image
 
-## Build
+todo - add instructions for finding a pre-built image
+
+## Build a new image
 
 From inside the `bwi-docker` directory, build the Docker image:
 ```
-sudo docker-compose build
+docker-compose build
 ```
 
-Add the `docker` user to the xhost users (this enables display of UI elements)
+
+
+# Setup (from host bash shell)
+
+Add the `docker` user to the xhost users.  This enables display of UI elements and is only needed once on host startup.
 ```
 xhost +local:docker
+```
+
+Create a project directory inside the `bwi-docker` directory.  **All docker compose commands should be executed from inside `bwi-docker` for the container to work correctly.  Failure to do so can have undesired consequesnces**.
+
+Get your user and user group id and replace the values in the `USER` tag in `docker-compose.yml`.
+```
+id -u #for uid
+id -g #for gid
 ```
 
 # Usage
 ## Run ROS and the BWI stack in Docker
 
-Run the following command to start up a detached container called `bwibase_c` using the service `bwibase_s` defined in `docker-compose.yml`:
+Run the following command to start up a detached container called `bwi_system_c` using the service `bwi_system_s` defined in `docker-compose.yml`:
 ```
-sudo docker-compose run -d --name bwibase_c bwibase_s
+docker-compose up -d
 ```
 
-In a new terminal window, open a bash terminal inside the container we just created, `bwibase_c`, with:
+In a new terminal window, open a bash terminal inside the container we just created, `bwi_system_c`, with:
 ```
-sudo docker exec -ti bwibase_c bash
+docker exec -ti bwi_system_c bash -l
 ```
 
 In this Docker container shell session you can run ROS commands.
-
-For simplicity, the remaining instructions assume using Docker commands to open new shell sessions in the container for each process.  However, this is where using `tmux` can be really handy.  See the [Resources](#resources) section below.
 
 Run the standard [visit doors demo in AHG](https://github.com/utexas-bwi/bwi/blob/master/demo_v4.md) with the following commands.  Source your workspace with `source ~/.bashrc` if you run into any errors.
 ```
 roslaunch bwi_launch segbot_v4_ahg.launch
 ```
 
-Open another terminal in the container with `sudo docker exec -ti bwibase_c bash`, and then run the AHG visit doors demo with:
+Open another terminal in the container with `sudo docker exec -ti bwi_system_c bash -l`, and then run the AHG visit doors demo with:
 
 ```
 rosrun bwi_tasks visit_door_list_smach
@@ -84,75 +98,6 @@ When finished, `exit` to exit the container bash session, and then stop and remo
 sudo docker-compose down
 ```
 
-# Development
+# Development inside the container
 
-In order to test new packages on the BWI code base, a development workspace, `dev_ws`, is created in `volumes/` that persists on the host when a docker container is closed.  This workspace must be configured before it can be used.
-
-First, you may need to change the permissions on the directory on the host bc it was created with root permissions by docker.  From the main `bwi-docker` directory, run the command below.  The `<username>` and `<groupname>` are both the name of your user on the host machine, ie `bwiuser:bwiuser`.  BE AWARE THAT `chown -R` CHANGES PERMISSIONS FOR EVERYTHING IN VOLUMES because of the `-R` flag.  If you add other volumes that need different permissions, be sure not to change them recursively.
-```
-sudo chown -R <username>:<groupname> volumes
-```
-Next navigate to the `dev_ws` **inside the container** to source the main workspace before building your development workspace.  This ensures you are including all the settings from the main `catkin_ws`.
-```
-cd /home/bwilab/dev_ws
-mkdir src
-source ~/.bashrc
-catkin build
-```
-If it builds correctly, you will see new directores `build` and `devel`.  Then when you want to use the `dev_ws`, source it as below.
-```
-source /home/bwilab/dev_ws/devel/setup.bash
-```
-____________
-
-# Resources
-
-## Learning and Reference
-- [LinkedIn Learning Docker Course](https://www.linkedin.com/learning-login/share?account=36306084&forceAccount=false&redirect=https%3A%2F%2Fwww.linkedin.com%2Flearning%2Flearning-docker-2018%3Ftrk%3Dshare_ent_url%26shareId%3D%252F%252FR0%252F9JHQI2Iyed65k0LzQ%253D%253D) - free to UT members.
-- [Docker Reference](https://docs.docker.com/reference/)
-
-
-## Using tmux to run multiple terminal sessions in a container
-
-
-**tmux** is a great tool for working in terminal, especially with a remote host like ssh or a docker container.  It allows users to run multiple shell sessions in the background or in panes, rather than opening a new terminal on your host and logging in to a shell session on the remote every time you want to run a new process.
-
-Start a tmux session by typing `tmux` to start a numbered session, or give it a name with:
-```
-tmux new-session -sSessionName
-```
-
-Attach to a session with:
-```
-tmux attach-session -t SessionName
-```
-
-Keyboard shortcuts allow you to open new windows inside a tmux session and switch between them:
-
-- **ctrl+b, c** allows you to **c**reate a new window in a tmux session.
-- **ctrl+b, n** to switch to the the **n**ext window in a session.
-- **ctrl+b, p** to switch to the **p**revious window.
-- **ctrl+b, w** gives a selectable list of all windows in a session.
-
-To close a window, simply type
-```
-tmux kill-window -t <window number>
-```
-
-Panes allow you to split a window into sections:
-- **ctrl+b, %** splits vertically.
-- **ctrl+b, "** splits horizontally.
-- **ctrl+b, \<arrow keys\>** to switch between panes.
-
-To close a current pane, simply type
-```
-tmux kill-pane
-```
-
-To close the entire session:
-
-`tmux kill-session` to kill the current session, or
-
-`tmux kill-session -t <session name>` to kill another session by target name (or id).
-
-Plenty of `tmux` cheat sheets and guides are available online for more info.
+A development directory called `projects` persists on the host when a docker container is closed.  ROS Melodic workspaces can be added to this directory.

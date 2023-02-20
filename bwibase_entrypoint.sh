@@ -1,13 +1,25 @@
 #!/bin/bash
 
+# while getopts u:g: flag
+# do
+#     case "${flag}" in
+#         u) userid=${OPTARG};;
+#         g) groupid=${OPTARG};;
+#     esac
+# done
+# echo "Assigning host user id $userid to docker user."
+
+# usermod -u $userid bwi-docker
+# sleep 2
+# groupmod -g $groupid bwi-docker
+
 source /opt/ros/melodic/setup.bash
-#export DOCKER_USER_TEST=$1
-# source /home/$1/catkin_ws/devel/setup.bash
-export SEGWAY_INTERFACE_ADDRESS=10.66.171.1
-export SEGWAY_IP_ADDRESS=10.66.171.5
-export SEGWAY_IP_PORT_NUM=8080
-export SEGWAY_BASE_PLATFORM=RMP_110
-export SEGWAY_PLATFORM_NAME=RMP_110
+#source /home/bwi-docker/catkin_ws/devel/setup.bash
+# export SEGWAY_INTERFACE_ADDRESS=10.66.171.1
+# export SEGWAY_IP_ADDRESS=10.66.171.5
+# export SEGWAY_IP_PORT_NUM=8080
+# export SEGWAY_BASE_PLATFORM=RMP_110
+# export SEGWAY_PLATFORM_NAME=RMP_110
 
 # # ensure the postgresql database is accessible to the user
 # sudo /etc/init.d/postgresql start
@@ -22,5 +34,3 @@ export SEGWAY_PLATFORM_NAME=RMP_110
 
 #start ros
 roscore
-
-#exec "$@"
