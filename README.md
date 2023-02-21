@@ -5,17 +5,14 @@ This package enables the BWI code stack on machines running Ubuntu 20.04.03 LTS+
 [Getting Started](#getting-started)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[Requirements](#requirements)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[Install](#install)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;[Build](#build)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[Setup](#setup)<br/>
 [Usage](#usage)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[Run ROS and the BWI stack in Docker](#run-ros-and-the-bwi-stack-in-docker)<br/>
-[Development](#development)<br/>
-[Resources](#resources)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;[Learning and Reference](#learning-and-reference)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;[Using tmux](#using-tmux-to-run-terminal-sessions-in-the-background-of-a-container)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[Development](#development-inside-the-container)<br/>
 
 # Getting Started
 
-**Note that if your BWIbot already has this package setup, you can start from "Usage".**
+**Note that if your BWIbot already has this package setup, you can start from "Setup".**
 
 ## Requirements
 
@@ -34,11 +31,11 @@ Clone the repo into a useful directory, eg `/home/<your user>/`.  Checkout the "
 git clone https://github.com/utexas-bwi/bwi-docker.git
 git checkout system_only
 ```
-## Pull the system image
+### Pull the system image
 
 todo - add instructions for finding a pre-built image
 
-## Build a new image (not necessary on configured robots)
+### Build a new image (not necessary on configured robots)
 
 From inside the `bwi-docker` directory, build the Docker image:
 ```
@@ -48,16 +45,13 @@ docker compose build
 bwidocker build
 ```
 
-# Setup (from host shell)
+## Setup (from host shell)
 
 From the `bwi-docker` directory, copy the aliases to your userspace with
 ```
 cat aliases &>> ~/.bash_aliases
 ```
-Then create a `project` directory.  **All docker commands should be executed from inside `bwi-docker` for the container to work correctly.  Not doing so can have undesired consequesnces**.
-```
-mkdir projects
-```
+**All docker commands should be executed from inside `bwi-docker` for the container to work correctly.  Not doing so can have undesired consequesnces**.
 
 Start the docker container with
 ```
@@ -113,6 +107,6 @@ When finished, `exit` to exit the container bash session, and then stop and remo
 bwidocker stop
 ```
 
-# Development inside the container
+## Development inside the container
 
 A development directory called `projects` persists on the host when a docker container is closed.  ROS Melodic workspaces can be added to this directory.
