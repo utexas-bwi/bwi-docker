@@ -38,51 +38,66 @@ git checkout system_only
 
 todo - add instructions for finding a pre-built image
 
-## Build a new image
+## Build a new image (not necessary on configured robots)
 
 From inside the `bwi-docker` directory, build the Docker image:
 ```
-docker-compose build
+docker compose build
+
+# or if bash aliases have been setup (see Setup)
+bwidocker build
 ```
 
+# Setup (from host shell)
 
-
-# Setup (from host bash shell)
-
-Add the `docker` user to the xhost users.  This enables display of UI elements and is only needed once on host startup.
+From the `bwi-docker` directory, copy the aliases to your userspace with
 ```
-xhost +local:docker
+cat aliases &>> ~/.bash_aliases
+```
+Then create a `project` directory.  **All docker commands should be executed from inside `bwi-docker` for the container to work correctly.  Not doing so can have undesired consequesnces**.
+```
+mkdir projects
 ```
 
-Create a project directory inside the `bwi-docker` directory.  **All docker compose commands should be executed from inside `bwi-docker` for the container to work correctly.  Failure to do so can have undesired consequesnces**.
-
-Get your user and user group id and replace the values in the `USER` tag in `docker-compose.yml`.
+Start the docker container with
 ```
-id -u #for uid
-id -g #for gid
+bwidocker start
 ```
+From a new host shell, open a bash shell inside the container with
+```
+bwidocker shell
+```
+Inside the container, setup a catkin_ws as usual and clone the bwi repo into `catkin_ws/src`.
 
 # Usage
+
+Before starting the container, you can add workspace sourcing by updating the `$WORKSPACE` variable.  Presently only one workspace can be added this way, but you can always source additional workspaces by adding them to ~/.bashrc inside the container.  However, the settings will not persist after the container is stopped.
+```
+export WORKSPACE=~/projects/<workspace_directory>
+```
+Start the docker container with
+```
+bwidocker start
+```
+From a new host shell, open a bash shell inside the container with
+```
+bwidocker shell
+```
+When finished, remove the container with
+```
+bwidocker stop
+```
+
 ## Run ROS and the BWI stack in Docker
 
-Run the following command to start up a detached container called `bwi_system_c` using the service `bwi_system_s` defined in `docker-compose.yml`:
-```
-docker-compose up -d
-```
+In the Docker container shell you can run ROS commands.
 
-In a new terminal window, open a bash terminal inside the container we just created, `bwi_system_c`, with:
-```
-docker exec -ti bwi_system_c bash -l
-```
-
-In this Docker container shell session you can run ROS commands.
-
-Run the standard [visit doors demo in AHG](https://github.com/utexas-bwi/bwi/blob/master/demo_v4.md) with the following commands.  Source your workspace with `source ~/.bashrc` if you run into any errors.
+Run the standard [visit doors demo in AHG](https://github.com/utexas-bwi/bwi/blob/master/demo_v4.md) with the following commands.
 ```
 roslaunch bwi_launch segbot_v4_ahg.launch
 ```
 
-Open another terminal in the container with `sudo docker exec -ti bwi_system_c bash -l`, and then run the AHG visit doors demo with:
+Open another terminal in the container with `bwidocker shell`, and then run the AHG visit doors demo with:
 
 ```
 rosrun bwi_tasks visit_door_list_smach
@@ -95,7 +110,7 @@ rosrun segbot_bringup teleop_twist_keyboard
 
 When finished, `exit` to exit the container bash session, and then stop and remove the docker resources with:
 ```
-sudo docker-compose down
+bwidocker stop
 ```
 
 # Development inside the container
