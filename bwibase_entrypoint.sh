@@ -1,25 +1,23 @@
 #!/bin/bash
 
-# while getopts u:g: flag
-# do
-#     case "${flag}" in
-#         u) userid=${OPTARG};;
-#         g) groupid=${OPTARG};;
-#     esac
-# done
-# echo "Assigning host user id $userid to docker user."
+while getopts w: flag
+do
+    case "${flag}" in
+        w) ws=${OPTARG};;
+    esac
+done
 
-# usermod -u $userid bwi-docker
-# sleep 2
-# groupmod -g $groupid bwi-docker
+# source the given workspace after /opt/ros...
+if [ -n "$ws" ]; then
+sed -i '/source \/opt\/ros\/melodic\/setup.bash/a \
+source '$ws'\/devel\/setup.bash' /home/bwi-docker/.profile
+sed -i '/source \/opt\/ros\/melodic\/setup.bash/a \
+source '$ws'\/devel\/setup.bash' /home/bwi-docker/.bashrc
+fi
+
 
 source /opt/ros/melodic/setup.bash
-#source /home/bwi-docker/catkin_ws/devel/setup.bash
-# export SEGWAY_INTERFACE_ADDRESS=10.66.171.1
-# export SEGWAY_IP_ADDRESS=10.66.171.5
-# export SEGWAY_IP_PORT_NUM=8080
-# export SEGWAY_BASE_PLATFORM=RMP_110
-# export SEGWAY_PLATFORM_NAME=RMP_110
+# source /home/bwi-docker/catkin_ws/devel/setup.bash
 
 # # ensure the postgresql database is accessible to the user
 # sudo /etc/init.d/postgresql start

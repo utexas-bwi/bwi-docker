@@ -21,7 +21,6 @@ RUN apt-get update && \
     pip install -U pyYAML
 RUN rosdep init
 
-
 ENV USERNAME bwi-docker
 # setup the non-root user
 RUN useradd -m -s /bin/bash -G sudo,dialout $USERNAME
@@ -33,36 +32,14 @@ RUN source /opt/ros/melodic/setup.bash && cd amrl_msgs && export ROS_PACKAGE_PAT
 
 # setup .bashrc
 SHELL ["/bin/bash", "-l", "-c"]
-
-RUN echo -e '\
+RUN echo -e "\
 source /opt/ros/melodic/setup.bash\n\
-# source /home/${USERNAME}/catkin_ws/devel/setup.bash\n\
-export SEGWAY_INTERFACE_ADDRESS=10.66.171.1\n\
-export SEGWAY_IP_ADDRESS=10.66.171.5\n\
-export SEGWAY_IP_PORT_NUM=8080\n\
-export SEGWAY_BASE_PLATFORM=RMP_110\n\
-export SEGWAY_PLATFORM_NAME=RMP_110\n\
-export ROS_PACKAGE_PATH=\$ROS_PACKAGE_PATH:~/amrl_msgs' >> ~/.profile
-
-RUN echo -e '\
+export ROS_PACKAGE_PATH=\$ROS_PACKAGE_PATH:~/amrl_msgs" >> ~/.profile
+RUN echo -e "\
 source /opt/ros/melodic/setup.bash\n\
-# source /home/${USERNAME}/catkin_ws/devel/setup.bash\n\
-export SEGWAY_INTERFACE_ADDRESS=10.66.171.1\n\
-export SEGWAY_IP_ADDRESS=10.66.171.5\n\
-export SEGWAY_IP_PORT_NUM=8080\n\
-export SEGWAY_BASE_PLATFORM=RMP_110\n\
-export SEGWAY_PLATFORM_NAME=RMP_110\n\
-export ROS_PACKAGE_PATH=\$ROS_PACKAGE_PATH:~/amrl_msgs' >> ~/.bashrc
-
-# ARG HOST_UID
-# ARG HOST_GID
-
-# USER root
-# ENV host_uid=${HOST_UID}
-# ENV host_gid=${HOST_GID}
+export ROS_PACKAGE_PATH=\$ROS_PACKAGE_PATH:~/amrl_msgs" >> ~/.bashrc
 
 # copy the entrypoint into the image
 COPY ./bwibase_entrypoint.sh ./bwibase_entrypoint.sh
 # run this script on startup
-# ENTRYPOINT ./bwibase_entrypoint.sh -u $host_uid -g $host_gid
 ENTRYPOINT ./bwibase_entrypoint.sh
