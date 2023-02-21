@@ -12,7 +12,7 @@ This package enables the BWI code stack on machines running Ubuntu 20.04.03 LTS+
 
 # Getting Started
 
-**Note that if your BWIbot already has this package setup, you can start from "Setup".**
+**Note that if your BWIbot already has this package installed, you can start from "Setup".**
 
 ## Requirements
 
@@ -41,52 +41,58 @@ From inside the `bwi-docker` directory, build the Docker image:
 ```
 docker compose build
 
-# or if bash aliases have been setup (see Setup)
-bwidocker build
+# or if bash tools have been setup (see Setup)
+bwi-build
 ```
 
 ## Setup (from host shell)
 
-From the `bwi-docker` directory, copy the aliases to your userspace with
+From the `bwi-docker` directory, copy the bash tools to your userspace with
 ```
-cat aliases &>> ~/.bash_aliases
+echo "source `pwd`/bash_tools" >> ~/.bashrc
+source ~/.bashrc
 ```
-**All docker commands should be executed from inside `bwi-docker` for the container to work correctly.  Not doing so can have undesired consequesnces**.
+If you are running a BWIbot V2, change the `env_file` variable in `docker-compose.yml` to:
+```
+env_file: base_env/v2_env
+```
+
+**Docker (bwi-*) commands should be executed from inside `bwi-docker` for the container to work correctly.  Not doing so can have undesired consequesnces**.
 
 Start the docker container with
 ```
-bwidocker start
+bwi-start
 ```
-From a new host shell, open a bash shell inside the container with
+From a new host shell, open a bash shell inside the container.  **`bwi-shell` is safe to run from any directory on the host**
 ```
-bwidocker shell
+bwi-shell
 ```
-Inside the container, setup a catkin_ws as usual and clone the bwi repo into `catkin_ws/src`.
+From inside the container, setup a catkin_ws [as usual](http://wiki.ros.org/ROS/Tutorials/InstallingandConfiguringROSEnvironment) and clone the bwi repo into `catkin_ws/src`.
 
 # Usage
 
-Before starting the container, you can add workspace sourcing by updating the `$WORKSPACE` variable.  Presently only one workspace can be added this way, but you can always source additional workspaces by adding them to ~/.bashrc inside the container.  However, the settings will not persist after the container is stopped.
+Before starting a container, you can add workspace sourcing by updating the `$WORKSPACE` variable.  Presently only one workspace can be added this way, but you can always source additional workspaces by adding them to ~/.bashrc from inside the container.  However, the settings will not persist after the container is stopped.
 ```
-export WORKSPACE=~/projects/<workspace_directory>
+bwi-ws /home/bwi-docker/projects/<workspace_directory>
 ```
 Start the docker container with
 ```
-bwidocker start
+bwi-start
 ```
 From a new host shell, open a bash shell inside the container with
 ```
-bwidocker shell
+bwi-shell
 ```
 When finished, remove the container with
 ```
-bwidocker stop
+bwi-stop
 ```
 
 ## Run ROS and the BWI stack in Docker
 
 In the Docker container shell you can run ROS commands.
 
-Run the standard [visit doors demo in AHG](https://github.com/utexas-bwi/bwi/blob/master/demo_v4.md) with the following commands.
+Run the standard [visit doors demo in AHG](https://github.com/utexas-bwi/bwi/blob/master/demo_v4.md) with the following commands.  Be sure you are running the launch file for the correct robot - either v4 or v2.
 ```
 roslaunch bwi_launch segbot_v4_ahg.launch
 ```
@@ -102,11 +108,12 @@ If you need to teleop the robot, use the following command inside the container:
 rosrun segbot_bringup teleop_twist_keyboard
 ```
 
-When finished, `exit` to exit the container bash session, and then stop and remove the docker resources with:
+When finished, `exit` to exit the container bash session, and then stop and remove the docker resources in the terminal you started the container with:
 ```
-bwidocker stop
+(cancel the process with "ctrl + c")
+bwi-stop
 ```
 
 ## Development inside the container
 
-A development directory called `projects` persists on the host when a docker container is closed.  ROS Melodic workspaces can be added to this directory.
+A development directory called `projects` persists on the host when a docker container is closed.  ROS Melodic workspaces can be added to this directory and built from inside the container.  Their contents will persist after the container is closed.

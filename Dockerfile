@@ -6,9 +6,8 @@ SHELL ["/bin/bash", "-c"]
 ENV ROS_DISTRO melodic
 
 RUN apt-get update &&\
-    apt-get -y install apt-utils curl nano vim tmux python-pip
-
-RUN echo 'deb http://packages.ros.org/ros/ubuntu bionic main' > /etc/apt/sources.list.d/ros-latest.list && \
+    apt-get -y install apt-utils curl nano vim tmux python-pip \
+    && echo 'deb http://packages.ros.org/ros/ubuntu bionic main' > /etc/apt/sources.list.d/ros-latest.list && \
     curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | apt-key add -
 
 # update install resources to latest
@@ -17,15 +16,16 @@ RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get -y install \
     ros-${ROS_DISTRO}-desktop-full python-rosdep python-rosinstall \
     python-rosinstall-generator python-wstool build-essential \
-    libqt5websockets5-dev qt5-default && \
-    pip install -U pyYAML
-RUN rosdep init
+    python-catkin-tools libqt5websockets5-dev qt5-default && \
+    pip install -U pyYAML \
+    && rosdep init
 
-ENV USERNAME bwi-docker
 # setup the non-root user
+ENV USERNAME bwi-docker
 RUN useradd -m -s /bin/bash -G sudo,dialout $USERNAME
 USER $USERNAME
 WORKDIR /home/$USERNAME
+
 RUN rosdep update
 RUN git clone https://github.com/ut-amrl/amrl_msgs.git
 RUN source /opt/ros/melodic/setup.bash && cd amrl_msgs && export ROS_PACKAGE_PATH=`pwd`:$ROS_PACKAGE_PATH && make -j
@@ -34,8 +34,8 @@ RUN source /opt/ros/melodic/setup.bash && cd amrl_msgs && export ROS_PACKAGE_PAT
 SHELL ["/bin/bash", "-l", "-c"]
 RUN echo -e "\
 source /opt/ros/melodic/setup.bash\n\
-export ROS_PACKAGE_PATH=\$ROS_PACKAGE_PATH:~/amrl_msgs" >> ~/.profile
-RUN echo -e "\
+export ROS_PACKAGE_PATH=\$ROS_PACKAGE_PATH:~/amrl_msgs" >> ~/.profile \
+&& echo -e "\
 source /opt/ros/melodic/setup.bash\n\
 export ROS_PACKAGE_PATH=\$ROS_PACKAGE_PATH:~/amrl_msgs" >> ~/.bashrc
 

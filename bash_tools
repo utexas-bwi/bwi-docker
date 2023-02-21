@@ -1,0 +1,21 @@
+bwi-start(){
+    xhost +si:localuser:root
+    export UID_GID=$(id -u):$(id -g)
+    docker compose up
+}
+
+bwi-stop(){
+    docker compose down
+}
+
+bwi-shell() {
+    docker exec -ti bwi_system_c bash -l
+}
+
+bwi-build() {
+    docker compose build
+}
+
+bwi-ws() {
+    export WORKSPACE=$1
+}

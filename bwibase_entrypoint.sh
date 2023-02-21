@@ -15,9 +15,7 @@ sed -i '/source \/opt\/ros\/melodic\/setup.bash/a \
 source '$ws'\/devel\/setup.bash' /home/bwi-docker/.bashrc
 fi
 
-
 source /opt/ros/melodic/setup.bash
-# source /home/bwi-docker/catkin_ws/devel/setup.bash
 
 # # ensure the postgresql database is accessible to the user
 # sudo /etc/init.d/postgresql start

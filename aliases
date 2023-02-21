@@ -1,7 +1,0 @@
-alias 'bwidocker start'='xhost +si:localuser:root && export UID_GID=$(id -u):$(id -g) docker compose up'
-alias 'bwidocker stop'='docker compose down'
-alias 'bwidocker shell'='docker exec -ti bwi_system_c bash -l'
-alias 'bwidocker build'='docker compose build'
-bwidocker-ws() {
-    export WORKSPACE=$1
-}
