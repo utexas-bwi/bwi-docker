@@ -60,7 +60,7 @@ Next, edit `docker-compose.yml` with the settings for your robot.  To run the co
       - /dev/hokuyo:/dev/hokuyo
       - /dev/ttyUSB0:/dev/ttyUSB0
       # - /dev/segway_rmp:/dev/segway_rmp
-      - /dev/kinect:/dev/kinect
+      # - /dev/kinect:/dev/kinect
       
 
 # For a v4+ BWIbot:
@@ -68,7 +68,7 @@ Next, edit `docker-compose.yml` with the settings for your robot.  To run the co
        - /dev/hokuyo:/dev/hokuyo
        # - /dev/ttyUSB0:/dev/ttyUSB0
        - /dev/segway_rmp:/dev/segway_rmp
-       - /dev/kinect:/dev/kinect
+       # - /dev/kinect:/dev/kinect
 
 ```
 
@@ -83,7 +83,7 @@ Start the docker container with
 ```
 bwi-start
 ```
-From a new host shell, open a bash shell inside the container.  **`bwi-shell` is safe to run from any directory on the host**
+)pen a bash shell inside the container.  **`bwi-shell` is safe to run from any directory on the host**
 ```
 bwi-shell
 ```
@@ -91,15 +91,13 @@ From inside the container, setup a catkin_ws [as usual](http://wiki.ros.org/ROS/
 
 # Usage
 
-Before starting a container, you can add workspace sourcing by updating the `$WORKSPACE` variable.  Note that the path should be fully defined, not using shorthand like `~`, because they are interpreted as host locations.  Presently only one workspace can be added this way, but you can always source additional workspaces by adding them to ~/.bashrc from inside the container.  However, the settings will not persist after the container is stopped.
-```
-bwi-ws /home/bwi-docker/projects/<workspace_directory>
-```
+These commands should be run from the host:
+
 Start the docker container with
 ```
 bwi-start
 ```
-From a new host shell, open a bash shell inside the container with
+Open a bash shell inside the container with
 ```
 bwi-shell
 ```
@@ -107,10 +105,20 @@ When finished, remove the container with
 ```
 bwi-stop
 ```
+Before starting a container, you can add sourcing of an existing catkin workspace by updating the `$WORKSPACE` variable.  Note that the path should be fully defined, not using shorthand like `~` because it is interpreted as the host's home directory (not the one in the container).  Presently only one workspace can be added this way.
+```
+bwi-ws /home/bwi-docker/projects/<workspace_directory>
+```
+***Note that only changes under the directories `projects` and `base_env` will persist after a container is closed.
+
 
 ## Run ROS and the BWI stack in Docker
 
 In the Docker container shell you can run ROS commands.
+
+To use the BWI stack, install it to `src` in a catkin workspace inside the container.  If you do not yet have a catkin workspace, open a shell in the container and create a catkin_ws in the `projects` directory with `mkdir -p ~/projects/catkin/src`.  Initialize the workspace by `cd projects/catkin_ws` and then execute `catkin build`.  Source the ws with `source devel/setup.bash`.  Then install the [BWI Code base](https://github.com/utexas-bwi/bwi) as usual.
+
+### Run a BWI demo
 
 Run the standard [visit doors demo in AHG](https://github.com/utexas-bwi/bwi/blob/master/demo_v4.md) with the following commands.  Be sure you are running the launch file for the correct robot - either v4 or v2.
 ```
@@ -128,9 +136,8 @@ If you need to teleop the robot, use the following command inside the container:
 rosrun segbot_bringup teleop_twist_keyboard
 ```
 
-When finished, `exit` to exit the container bash session, and then stop and remove the docker resources in the terminal you started the container with:
+When finished, `exit` to exit the container bash session, and then stop and remove the docker resources with:
 ```
-(cancel the process with "ctrl + c")
 bwi-stop
 ```
 

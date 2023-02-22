@@ -1,7 +1,7 @@
 bwi-start(){
     xhost +si:localuser:root
     export UID_GID=$(id -u):$(id -g)
-    docker compose up
+    docker compose up -d
 }
 
 bwi-stop(){

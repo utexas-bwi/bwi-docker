@@ -40,6 +40,6 @@ source /opt/ros/melodic/setup.bash\n\
 export ROS_PACKAGE_PATH=\$ROS_PACKAGE_PATH:~/amrl_msgs" >> ~/.bashrc
 
 # copy the entrypoint into the image
-COPY ./bwibase_entrypoint.sh ./bwibase_entrypoint.sh
+COPY ./bwi_entrypoint.sh ./bwi_entrypoint.sh
 # run this script on startup
-ENTRYPOINT ./bwibase_entrypoint.sh
+ENTRYPOINT ./bwi_entrypoint.sh
