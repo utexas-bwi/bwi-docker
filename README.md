@@ -45,14 +45,34 @@ docker compose build
 bwi-build
 ```
 
-## Setup (from host shell)
+## Setup
 
-From the `bwi-docker` directory, copy the bash tools to your userspace with
+From the `bwi-docker` directory on the host, copy the `bash_tools` to your userspace with
 ```
 echo "source `pwd`/bash_tools" >> ~/.bashrc
 source ~/.bashrc
 ```
-If you are running a BWIbot V2, change the `env_file` variable in `docker-compose.yml` to:
+
+Next, edit `docker-compose.yml` with the settings for your robot.  To run the container on an actual robot, you need to ensure some `devices` are accessible to the container.  Uncomment the lines as below for either a v2 or a v4+ robot.  To make additional usb devices available to the container, add them here.
+```
+# For a v2 BWIbot:
+    devices:
+      - /dev/hokuyo:/dev/hokuyo
+      - /dev/ttyUSB0:/dev/ttyUSB0
+      # - /dev/segway_rmp:/dev/segway_rmp
+      - /dev/kinect:/dev/kinect
+      
+
+# For a v4+ BWIbot:
+    devices:
+       - /dev/hokuyo:/dev/hokuyo
+       # - /dev/ttyUSB0:/dev/ttyUSB0
+       - /dev/segway_rmp:/dev/segway_rmp
+       - /dev/kinect:/dev/kinect
+
+```
+
+Lastly, when running a BWIbot V2, change the `env_file` variable in `docker-compose.yml` to:
 ```
 env_file: base_env/v2_env
 ```
@@ -71,7 +91,7 @@ From inside the container, setup a catkin_ws [as usual](http://wiki.ros.org/ROS/
 
 # Usage
 
-Before starting a container, you can add workspace sourcing by updating the `$WORKSPACE` variable.  Presently only one workspace can be added this way, but you can always source additional workspaces by adding them to ~/.bashrc from inside the container.  However, the settings will not persist after the container is stopped.
+Before starting a container, you can add workspace sourcing by updating the `$WORKSPACE` variable.  Note that the path should be fully defined, not using shorthand like `~`, because they are interpreted as host locations.  Presently only one workspace can be added this way, but you can always source additional workspaces by adding them to ~/.bashrc from inside the container.  However, the settings will not persist after the container is stopped.
 ```
 bwi-ws /home/bwi-docker/projects/<workspace_directory>
 ```

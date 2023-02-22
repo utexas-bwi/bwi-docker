@@ -22,5 +22,7 @@ services:
     # these usb device names are defined on the host using udev rules
     #devices:
       # - /dev/hokuyo:/dev/hokuyo
+      # - /dev/ttyUSB0:/dev/ttyUSB0
       # - /dev/segway_rmp:/dev/segway_rmp
+      # - /dev/kinect:/dev/kinect
     entrypoint: ./bwibase_entrypoint.sh -w ${WORKSPACE}
