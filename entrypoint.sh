@@ -17,15 +17,15 @@ fi
 
 source /opt/ros/melodic/setup.bash
 
-# # ensure the postgresql database is accessible to the user
-# sudo /etc/init.d/postgresql start
-# sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'nopass'"
-# echo -e '# hostname:port:database:username:password\n\
-# localhost:*:knowledge_base:postgres:nopass\n' > ~/.pgpass
-# sudo chmod 600 ~/.pgpass
+# ensure the postgresql database is accessible to the user
+sudo /etc/init.d/postgresql start
+sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'nopass'"
+echo -e '# hostname:port:database:username:password\n\
+localhost:*:knowledge_base:postgres:nopass\n' > ~/.pgpass
+sudo chmod 600 ~/.pgpass
 
-# # build the knowlege_base db
-# prepare_knowledge_bwi_ahg
+# build the knowlege_base db
+# prepare_knowledge_bwi_ahg &&\
 # echo "Knowledge_base db setup complete"
 
 #start ros
