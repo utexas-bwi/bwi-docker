@@ -1,8 +1,10 @@
 bwi-start(){
     xhost +si:localuser:root
+    echo "added docker xhost permissions"
     export UID_GID=$(id -u):$(id -g)
+    echo "exported uids"
     docker compose up -d
-    docker exec -ti bwi_system_c bash -l
+    echo "container started in background"
 }
 
 bwi-stop(){

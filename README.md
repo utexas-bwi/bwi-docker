@@ -93,24 +93,36 @@ From inside the container, setup a catkin_ws [as usual](http://wiki.ros.org/ROS/
 
 These commands should be run from the host:
 
-Start the docker container with
-```
-bwi-start
-```
-Open a bash shell inside the container with
-```
-bwi-shell
-```
-When finished, remove the container with
-```
-bwi-stop
-```
-Before starting a container, you can add sourcing of an existing catkin workspace by updating the `$WORKSPACE` variable.  Note that the path should be fully defined, not using shorthand like `~` because it is interpreted as the host's home directory (not the one in the container).  Presently only one workspace can be added this way.
+| command | operation | context |
+| --- | --- | --- |
+| `bwi-start` | Start the docker container | Run from project directory `bwi-docker` |
+| `bwi-shell` | Open a bash shell inside the container | Run from anywhere on the host |
+| `bwi-stop` | Stop and remove the docker container | Run from project directory `bwi-docker` |
+
+Optional commands: 
+
+| command | operation | context |
+| --- | --- | --- |
+| `bwi-ws` | Set a container workspace path to source (see below) | Run from anywhere on host |
+| `bwi-build ` | Build the container image | Run from project directory `bwi-docker` |
+
+Before starting a container, you can add sourcing of an existing catkin workspace by updating the `$WORKSPACE` variable.  Note that the path should be fully defined, not using shorthand like `~` because tilde is interpreted as the host's home directory.  We want the container user's home directory, which is at `/home/bwi-docker`).  Presently only one workspace at a time can be added this way:
 ```
 bwi-ws /home/bwi-docker/projects/<workspace_directory>
 ```
-***Note that only changes under the directories `projects` and `base_env` will persist after a container is closed.
+## Development and Persistent Data
 
+Only changes under the following directories will persist after a container is closed.
+
+| directory | purpose and usage |
+| --- | --- |
+| `projects` | put catkin workspaces and other files in this directory |
+| `base_env` | a place for keeping robot-specific environment variables |
+| `knowledge_db` | do not edit - the database files for `bwi_knowledge_representation`, which is managed by postgres |
+
+As a rule:
+- build files, for instance do `catkin build` from inside the contianer.
+- do git commands from the host.
 
 ## Run ROS and the BWI stack in Docker
 
@@ -144,3 +156,7 @@ bwi-stop
 ## Development inside the container
 
 A development directory called `projects` persists on the host when a docker container is closed.  ROS Melodic workspaces can be added to this directory and built from inside the container.  Their contents will persist after the container is closed.
+
+Follow these conventions:
+- build files, for instance do `catkin build`, from inside the contianer.
+- do git commands from the host.

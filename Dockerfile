@@ -32,26 +32,37 @@ RUN useradd --create-home --shell /bin/bash ${USERNAME} &&\
 USER $USERNAME
 WORKDIR /home/$USERNAME
 
-# ! --- not the best method to install depends since we are not keeping this ws, but it works
+# install bwi dependencies
 RUN source /opt/ros/melodic/setup.bash &&\
     rosdep update &&\
-    mkdir -p catkin_ws/src &&\
-    cd catkin_ws &&\
-    wstool init src https://raw.githubusercontent.com/utexas-bwi/bwi/master/rosinstall/melodic_docker.rosinstall &&\
-    rosdep install --from-paths src --ignore-src --rosdistro $ROS_DISTRO -y
+    mkdir -p tmp_ws/src &&\
+    cd tmp_ws &&\
+    wstool init src https://raw.githubusercontent.com/utexas-bwi/bwi/master/rosinstall/melodic.rosinstall &&\
+    rosdep install --from-paths src --ignore-src --rosdistro melodic -y
 
-# set the password for postgresql db
+# set up the bwi_knowledge_representation postgresql db
 USER postgres
 RUN  /etc/init.d/postgresql start &&\
     psql -c "ALTER USER postgres WITH PASSWORD 'nopass'" &&\
     createdb knowledge_base &&\
-	psql -d knowledge_base -f catkin_ws/src/bwi_common/knowledge_representation/sql/schema_postgresql.sql &&\
+	psql -d knowledge_base -f tmp_ws/src/bwi_common/knowledge_representation/sql/schema_postgresql.sql &&\
+    psql -c "SHOW data_directory;" &&\
 	/etc/init.d/postgresql stop
-
 USER $USERNAME
 WORKDIR /home/$USERNAME
-# ! --- be careful not to delete your data
-RUN rm -r catkin_ws
+RUN cd tmp_ws &&\
+    source /opt/ros/$ROS_DISTRO/setup.bash &&\
+    catkin build utexas_ahg bwi_knowledge_representation &&\
+    source devel/setup.bash &&\
+    sudo /etc/init.d/postgresql start &&\
+    sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'nopass'" &&\
+    echo -e '# hostname:port:database:username:password\n\
+localhost:*:knowledge_base:postgres:nopass\n' > ~/.pgpass &&\
+    sudo chmod 600 ~/.pgpass &&\
+    prepare_knowledge_bwi_ahg
+RUN rm -r tmp_ws
+
+# setup amrl messages
 RUN git clone https://github.com/ut-amrl/amrl_msgs.git
 RUN source /opt/ros/melodic/setup.bash && cd amrl_msgs && export ROS_PACKAGE_PATH=`pwd`:$ROS_PACKAGE_PATH && make -j
 
@@ -62,7 +73,8 @@ source /opt/ros/melodic/setup.bash\n\
 export ROS_PACKAGE_PATH=\$ROS_PACKAGE_PATH:~/amrl_msgs" >> ~/.profile \
 && echo -e "\
 source /opt/ros/melodic/setup.bash\n\
-export ROS_PACKAGE_PATH=\$ROS_PACKAGE_PATH:~/amrl_msgs" >> ~/.bashrc
+export ROS_PACKAGE_PATH=\$ROS_PACKAGE_PATH:~/amrl_msgs" >> ~/.bashrc &&\
+echo ""
 
 # copy the entrypoint into the image
 COPY ./entrypoint.sh ./entrypoint.sh
