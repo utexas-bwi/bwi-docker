@@ -1,0 +1,29 @@
+version: "3"
+
+services:
+  bwi_system_s:
+    runtime: nvidia
+    image: bwi_system_i
+    user: $UID_GID
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    env_file:
+      - base_env/v2_env
+    container_name: bwi_system_c
+    # this is set bc of errors with RViz being denied dbus comm w/ host
+    security_opt:
+      - apparmor:unconfined
+    volumes: # volumes allow persistent data on the host
+      - ./knowledge_db:/var/lib/postgresql/10/main
+      - ./projects:/home/bwi-docker/projects
+      - ./base_env:/home/bwi-docker/base_env
+    # give the container access to the host's network
+    network_mode: host
+    # these usb device names are defined on the host using udev rules
+    devices:
+      - /dev/hokuyo:/dev/hokuyo
+      - /dev/ttyUSB0:/dev/ttyUSB0
+      # - /dev/segway_rmp:/dev/segway_rmp
+      # - /dev/kinect:/dev/kinect
+    entrypoint: ./entrypoint.sh -w ${WORKSPACE}
