@@ -19,7 +19,7 @@ This package enables the BWI code stack on machines running Ubuntu 20.04.03 LTS+
 - Ubuntu OS
 - NVIDIA graphics card and drivers
 - [Docker](https://docs.docker.com/engine/install/ubuntu/)
-- [Docker-Compose](https://docs.docker.com/compose/install/)
+- Docker Compose v2 Plugin (installed with Docker document above)
 - [Nvidia Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker)
 
 This package is designed for use with Ubuntu OS and systems having NVIDIA graphics cards using NVIDIA drivers.  Verify whether you have NVIDIA drivers loaded with the command `nvidia-smi`.  If you do not, it will return an error.  This article describes a verified method of installing Nvidia drivers on Ubuntu under the heading [Install Nvidia Driver Using GUI](https://phoenixnap.com/kb/install-nvidia-drivers-ubuntu).  Do not forget to register the MOK on reboot (this option will appear in BIOS before the OS loads), otherwise the drivers will not be allowed to load.
@@ -28,8 +28,7 @@ This package is designed for use with Ubuntu OS and systems having NVIDIA graphi
 
 Clone the repo into a useful directory, eg `~/<your user>/`.  Checkout the "system_only" branch.
 ```
-git clone https://github.com/utexas-bwi/bwi-docker.git
-git checkout system_only
+git clone --branch system_only https://github.com/utexas-bwi/bwi-docker.git
 ```
 The rest of this setup assumes there is already a docker image called `bwi_system_i` on your system.  For build instructions, see the bottom of this page.
 
@@ -69,7 +68,7 @@ Optional commands:
 
 Source a workspace from the image ~/.bashrc and ~/.profile:
 
-Before starting a container, you can add sourcing of an existing catkin workspace by updating the `$WORKSPACE` variable.  Provide the relative path only from inside the `bwi-docker` directory.  Presently only one workspace at a time can be added this way:
+Before starting a container, you can add sourcing of an existing catkin workspace by updating the `$WORKSPACE` variable.  Provide the relative path only from inside the `bwi-docker` directory.  Presently only one workspace can be added this way:
 ```
 bwi-ws projects/<workspace_directory>
 ```
@@ -84,7 +83,7 @@ Only changes under the following directories will persist after a container is c
 
 | directory | purpose and usage |
 | --- | --- |
-| `projects` | put catkin workspaces and other files in this directory |
+| `projects` | **put catkin workspaces and other dev files in this directory** |
 | `base_env` | a place for keeping robot-specific environment variables |
 | `knowledge_db` | do not edit - the database files for `bwi_knowledge_representation`, which is managed by postgres |
 
@@ -95,6 +94,19 @@ As a rule:
 ## Run ROS and the BWI codebase
 
 In the Docker container shell you can run ROS commands.
+
+### Install the BWI code base
+
+Start a container and open a shell in it:
+```
+bwi-start
+bwi-shell
+```
+
+Make a catkin_ws under the "projects" directory and clone the bwi repo into src:
+```
+cd projects && mkdir -p catkin_ws/src
+cd src && git clone 
 
 To use the BWI stack, install it to `src` in a catkin workspace inside the container.  If you do not yet have a catkin workspace, open a shell in the container and create a catkin_ws in the `projects` directory with `mkdir -p ~/projects/catkin/src`.  Initialize the workspace by `cd projects/catkin_ws` and then execute `catkin build`.  Source the ws with `source devel/setup.bash`.  Then install the [BWI Code base](https://github.com/utexas-bwi/bwi).  You can skip the rosdep install steps, as the dependencies are already in the container.
 
