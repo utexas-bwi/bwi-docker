@@ -1,4 +1,4 @@
-This package enables the BWI code stack on machines running Ubuntu 20.04.03 LTS+.  It creates a Docker image and container that can control a V4 BWIbot.
+This package enables the BWI code stack on machines running Ubuntu 20.04.03 LTS+.  It creates a Docker image and container that can control a BWIbot V2 or V4.
 
 ### Table of Contents
 
@@ -12,7 +12,7 @@ This package enables the BWI code stack on machines running Ubuntu 20.04.03 LTS+
 
 # Getting Started
 
-**Note that if your BWIbot already has this package installed, you can start from "Setup".**
+**Note that if you are working on a lab BWIbot the requirements are already met.**
 
 ## Requirements
 
@@ -26,68 +26,28 @@ This package is designed for use with Ubuntu OS and systems having NVIDIA graphi
 
 ## Install
 
-Clone the repo into a useful directory, eg `/home/<your user>/`.  Checkout the "system_only" branch.
+Clone the repo into a useful directory, eg `~/<your user>/`.  Checkout the "system_only" branch.
 ```
 git clone https://github.com/utexas-bwi/bwi-docker.git
 git checkout system_only
 ```
-### Pull the system image
+The rest of this setup assumes there is already a docker image called `bwi_system_i` on your system.  For build instructions, see the bottom of this page.
 
-todo - add instructions for finding a pre-built image
-
-### Build a new image (not necessary on configured robots)
-
-From inside the `bwi-docker` directory, build the Docker image:
-```
-docker compose build
-
-# or if bash tools have been setup (see Setup)
-bwi-build
-```
 
 ## Setup
 
+1. Copy bash tools to your user space.
 From the `bwi-docker` directory on the host, copy the `bash_tools` to your userspace with
 ```
 echo "source `pwd`/bash_tools" >> ~/.bashrc
 source ~/.bashrc
 ```
 
-Next, edit `docker-compose.yml` with the settings for your robot.  To run the container on an actual robot, you need to ensure some `devices` are accessible to the container.  Uncomment the lines as below for either a v2 or a v4+ robot.  To make additional usb devices available to the container, add them here.
+1. Copy the correct config for your robot and put it in the main project directory.
+From the `bwi-docker` directory, run the command below.  Replace `<robot version>` with `V2` for running on a Bwibot V2 and `V4` for a BWIbot V4.:
 ```
-# For a v2 BWIbot:
-    devices:
-      - /dev/hokuyo:/dev/hokuyo
-      - /dev/ttyUSB0:/dev/ttyUSB0
-      # - /dev/segway_rmp:/dev/segway_rmp
-      # - /dev/kinect:/dev/kinect
-      
-
-# For a v4+ BWIbot:
-    devices:
-       - /dev/hokuyo:/dev/hokuyo
-       # - /dev/ttyUSB0:/dev/ttyUSB0
-       - /dev/segway_rmp:/dev/segway_rmp
-       # - /dev/kinect:/dev/kinect
-
+cp docker_configs/docker-compose_<robot version>.yml docker-compose.yml
 ```
-
-Lastly, when running a BWIbot V2, change the `env_file` variable in `docker-compose.yml` to:
-```
-env_file: base_env/v2_env
-```
-
-**Docker (bwi-*) commands should be executed from inside `bwi-docker` for the container to work correctly.  Not doing so can have undesired consequesnces**.
-
-Start the docker container with
-```
-bwi-start
-```
-)pen a bash shell inside the container.  **`bwi-shell` is safe to run from any directory on the host**
-```
-bwi-shell
-```
-From inside the container, setup a catkin_ws [as usual](http://wiki.ros.org/ROS/Tutorials/InstallingandConfiguringROSEnvironment) and clone the bwi repo into `catkin_ws/src`.
 
 # Usage
 
@@ -95,21 +55,29 @@ These commands should be run from the host:
 
 | command | operation | context |
 | --- | --- | --- |
-| `bwi-start` | Start the docker container | Run from project directory `bwi-docker` |
+| `bwi-start` | Start the docker container | **Run from project directory `bwi-docker`** |
 | `bwi-shell` | Open a bash shell inside the container | Run from anywhere on the host |
-| `bwi-stop` | Stop and remove the docker container | Run from project directory `bwi-docker` |
+| `bwi-stop` | Stop and remove the docker container | **Run from project directory `bwi-docker`** |
 
 Optional commands: 
 
 | command | operation | context |
 | --- | --- | --- |
 | `bwi-ws` | Set a container workspace path to source (see below) | Run from anywhere on host |
-| `bwi-build ` | Build the container image | Run from project directory `bwi-docker` |
+| `bwi-build ` | Build the container image (admin only) | **Run from project directory `bwi-docker`** |
 
-Before starting a container, you can add sourcing of an existing catkin workspace by updating the `$WORKSPACE` variable.  Note that the path should be fully defined, not using shorthand like `~` because tilde is interpreted as the host's home directory.  We want the container user's home directory, which is at `/home/bwi-docker`).  Presently only one workspace at a time can be added this way:
+
+Source a workspace from the image ~/.bashrc and ~/.profile:
+
+Before starting a container, you can add sourcing of an existing catkin workspace by updating the `$WORKSPACE` variable.  Provide the relative path only from inside the `bwi-docker` directory.  Presently only one workspace at a time can be added this way:
 ```
-bwi-ws /home/bwi-docker/projects/<workspace_directory>
+bwi-ws projects/<workspace_directory>
 ```
+Clear this value with
+```
+bwi-ws clear
+```
+
 ## Development and Persistent Data
 
 Only changes under the following directories will persist after a container is closed.
@@ -124,28 +92,22 @@ As a rule:
 - build files, for instance do `catkin build` from inside the contianer.
 - do git commands from the host.
 
-## Run ROS and the BWI stack in Docker
+## Run ROS and the BWI codebase
 
 In the Docker container shell you can run ROS commands.
 
-To use the BWI stack, install it to `src` in a catkin workspace inside the container.  If you do not yet have a catkin workspace, open a shell in the container and create a catkin_ws in the `projects` directory with `mkdir -p ~/projects/catkin/src`.  Initialize the workspace by `cd projects/catkin_ws` and then execute `catkin build`.  Source the ws with `source devel/setup.bash`.  Then install the [BWI Code base](https://github.com/utexas-bwi/bwi) as usual.
+To use the BWI stack, install it to `src` in a catkin workspace inside the container.  If you do not yet have a catkin workspace, open a shell in the container and create a catkin_ws in the `projects` directory with `mkdir -p ~/projects/catkin/src`.  Initialize the workspace by `cd projects/catkin_ws` and then execute `catkin build`.  Source the ws with `source devel/setup.bash`.  Then install the [BWI Code base](https://github.com/utexas-bwi/bwi).  You can skip the rosdep install steps, as the dependencies are already in the container.
 
-### Run a BWI demo
+### Run a BWI hallway demo
 
-Run the standard [visit doors demo in AHG](https://github.com/utexas-bwi/bwi/blob/master/demo_v4.md) with the following commands.  Be sure you are running the launch file for the correct robot - either v4 or v2.
+Run the standard visit doors demo in AHG.
 ```
-roslaunch bwi_launch segbot_v4_ahg.launch
-```
+[V2 Demo](https://github.com/utexas-bwi/bwi/blob/master/demo_v2.md)
+[V4 Demo](https://github.com/utexas-bwi/bwi/blob/master/demo_v4.md)
 
-Open another terminal in the container with `bwidocker shell`, and then run the AHG visit doors demo with:
-
+Commands should be run in a shell inside the continer.  which you can open in a running continer with
 ```
-rosrun bwi_tasks visit_door_list_smach
-```
-
-If you need to teleop the robot, use the following command inside the container:
-```
-rosrun segbot_bringup teleop_twist_keyboard
+bwi-shell
 ```
 
 When finished, `exit` to exit the container bash session, and then stop and remove the docker resources with:
@@ -160,3 +122,13 @@ A development directory called `projects` persists on the host when a docker con
 Follow these conventions:
 - build files, for instance do `catkin build`, from inside the contianer.
 - do git commands from the host.
+
+### Build a new image (not necessary on configured robots)
+
+From inside the `bwi-docker` directory, build the Docker image:
+```
+docker compose build
+
+# or if bash tools have been setup (see Setup)
+bwi-build
+```
