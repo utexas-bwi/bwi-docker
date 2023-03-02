@@ -10,6 +10,11 @@ services:
       dockerfile: Dockerfile
     env_file:
       - base_env/v2_env
+    environment:
+      - DISPLAY=${DISPLAY}
+      - NVIDIA_DRIVER_CAPABILITIES=all
+      - NVIDIA_VISIBLE_DEVICES=all
+      - QT_X11_NO_MITSHM=1
     container_name: bwi_system_c
     # this is set bc of errors with RViz being denied dbus comm w/ host
     security_opt:
