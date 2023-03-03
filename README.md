@@ -87,9 +87,6 @@ Only changes under the following directories will persist after a container is c
 | `base_env` | a place for keeping robot-specific environment variables |
 | `knowledge_db` | do not edit - the database files for `bwi_knowledge_representation`, which is managed by postgres |
 
-As a rule:
-- build files, for instance do `catkin build` from inside the contianer.
-- do git commands from the host.
 
 ## Run ROS and the BWI codebase
 
@@ -130,10 +127,6 @@ bwi-stop
 ## Development inside the container
 
 A development directory called `projects` persists on the host when a docker container is closed.  ROS Melodic workspaces can be added to this directory and built from inside the container.  Their contents will persist after the container is closed.
-
-Follow these conventions:
-- build files, for instance do `catkin build`, from inside the contianer.
-- do git commands from the host.
 
 ### Build a new image (not necessary on configured robots)
 
