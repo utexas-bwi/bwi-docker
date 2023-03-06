@@ -7,7 +7,7 @@ This package enables the BWI code stack on machines running Ubuntu 20.04.03 LTS+
 &nbsp;&nbsp;&nbsp;&nbsp;[Install](#install)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[Setup](#setup)<br/>
 [Usage](#usage)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;[Run ROS and the BWI stack in Docker](#run-ros-and-the-bwi-stack-in-docker)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[Run ROS and the BWI codebase](#run-ros-and-the-bwi-codebase)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;[Development](#development-inside-the-container)<br/>
 
 # Getting Started
@@ -87,9 +87,6 @@ Only changes under the following directories will persist after a container is c
 | `base_env` | a place for keeping robot-specific environment variables |
 | `knowledge_db` | do not edit - the database files for `bwi_knowledge_representation`, which is managed by postgres |
 
-As a rule:
-- build files, for instance do `catkin build` from inside the contianer.
-- do git commands from the host.
 
 ## Run ROS and the BWI codebase
 
@@ -103,19 +100,29 @@ bwi-start
 bwi-shell
 ```
 
-Make a catkin_ws under the "projects" directory and clone the bwi repo into src:
+Make a catkin_ws under the "projects" directory:
 ```
 cd projects && mkdir -p catkin_ws/src
-cd src && git clone 
-
-To use the BWI stack, install it to `src` in a catkin workspace inside the container.  If you do not yet have a catkin workspace, open a shell in the container and create a catkin_ws in the `projects` directory with `mkdir -p ~/projects/catkin/src`.  Initialize the workspace by `cd projects/catkin_ws` and then execute `catkin build`.  Source the ws with `source devel/setup.bash`.  Then install the [BWI Code base](https://github.com/utexas-bwi/bwi).  You can skip the rosdep install steps, as the dependencies are already in the container.
+cd catkin_ws
+```
+Install the BWI packages with wstool:
+```
+wstool init src https://raw.githubusercontent.com/utexas-bwi/bwi/master/rosinstall/$ROS_DISTRO.rosinstall
+```
+Build the packages with catkin build:
+```
+catkin build
+```
+Don't forget to source your workspace before running packages.:
+```
+source devel/setup.bash
+```
 
 ### Run a BWI hallway demo
 
 Run the standard visit doors demo in AHG.
-```
-[V2 Demo](https://github.com/utexas-bwi/bwi/blob/master/demo_v2.md)
-[V4 Demo](https://github.com/utexas-bwi/bwi/blob/master/demo_v4.md)
+- [V2 Demo](https://github.com/utexas-bwi/bwi/blob/master/demo_v2.md)
+- [V4 Demo](https://github.com/utexas-bwi/bwi/blob/master/demo_v4.md)
 
 Commands should be run in a shell inside the continer.  which you can open in a running continer with
 ```
@@ -130,10 +137,6 @@ bwi-stop
 ## Development inside the container
 
 A development directory called `projects` persists on the host when a docker container is closed.  ROS Melodic workspaces can be added to this directory and built from inside the container.  Their contents will persist after the container is closed.
-
-Follow these conventions:
-- build files, for instance do `catkin build`, from inside the contianer.
-- do git commands from the host.
 
 ### Build a new image (not necessary on configured robots)
 
