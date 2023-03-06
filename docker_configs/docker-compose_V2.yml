@@ -5,6 +5,8 @@ services:
     runtime: nvidia
     image: bwi_system_i
     user: $UID_GID
+    group_add:
+      - dialout
     build:
       context: ./
       dockerfile: Dockerfile
