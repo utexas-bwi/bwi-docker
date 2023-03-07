@@ -3,8 +3,8 @@ bwi-start(){
     echo "added docker xhost permissions"
     export UID_GID=$(id -u):$(id -g)
     echo "exported uids"
-    docker compose up -d
-    echo "container started in background"
+    docker compose up
+    #echo "container started in background"
 }
 
 bwi-stop(){
@@ -17,9 +17,20 @@ bwi-shell() {
 
 bwi-build() {
     export UID_GID=$(id -u):$(id -g)
+    echo "using user:group $UID_GID"
     docker compose build
 }
 
 bwi-ws() {
-    export WORKSPACE=$1
+    if [ $1 == "clear" ]; then \
+    export WORKSPACE=; else \
+    export WORKSPACE=/home/bwi-docker/$1; fi
+}
+
+postgres_pw_setup() {
+    cat > ~/.pgpass <<EOF
+# hostname:port:database:username:password
+localhost:*:knowledge_base:postgres:nopass
+EOF
+    chmod 600 ~/.pgpass
 }

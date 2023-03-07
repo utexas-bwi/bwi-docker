@@ -20,9 +20,6 @@ RUN apt-get update &&\
     pip install -U pyYAML &&\
     rosdep init
 
-# RUN useradd -m -s /bin/bash -G sudo,dialout $USERNAME &&\
-#     echo '${USERNAME} ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
-
 # setup the non-root user
 ENV USERNAME bwi-docker
 RUN useradd --create-home --shell /bin/bash ${USERNAME} &&\
@@ -40,26 +37,8 @@ RUN source /opt/ros/melodic/setup.bash &&\
     wstool init src https://raw.githubusercontent.com/utexas-bwi/bwi/master/rosinstall/melodic.rosinstall &&\
     rosdep install --from-paths src --ignore-src --rosdistro melodic -y
 
-# set up the bwi_knowledge_representation postgresql db
-USER postgres
-RUN  /etc/init.d/postgresql start &&\
-    psql -c "ALTER USER postgres WITH PASSWORD 'nopass'" &&\
-    createdb knowledge_base &&\
-	psql -d knowledge_base -f tmp_ws/src/bwi_common/knowledge_representation/sql/schema_postgresql.sql &&\
-    psql -c "SHOW data_directory;" &&\
-	/etc/init.d/postgresql stop
 USER $USERNAME
 WORKDIR /home/$USERNAME
-RUN cd tmp_ws &&\
-    source /opt/ros/$ROS_DISTRO/setup.bash &&\
-    catkin build utexas_ahg bwi_knowledge_representation &&\
-    source devel/setup.bash &&\
-    sudo /etc/init.d/postgresql start &&\
-    sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'nopass'" &&\
-    echo -e '# hostname:port:database:username:password\n\
-localhost:*:knowledge_base:postgres:nopass\n' > ~/.pgpass &&\
-    sudo chmod 600 ~/.pgpass &&\
-    prepare_knowledge_bwi_ahg
 RUN rm -r tmp_ws
 
 # setup amrl messages
@@ -73,8 +52,7 @@ source /opt/ros/melodic/setup.bash\n\
 export ROS_PACKAGE_PATH=\$ROS_PACKAGE_PATH:~/amrl_msgs" >> ~/.profile \
 && echo -e "\
 source /opt/ros/melodic/setup.bash\n\
-export ROS_PACKAGE_PATH=\$ROS_PACKAGE_PATH:~/amrl_msgs" >> ~/.bashrc &&\
-echo ""
+export ROS_PACKAGE_PATH=\$ROS_PACKAGE_PATH:~/amrl_msgs" >> ~/.bashrc
 
 # copy the entrypoint into the image
 COPY ./entrypoint.sh ./entrypoint.sh

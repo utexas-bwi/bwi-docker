@@ -22,7 +22,6 @@ services:
     security_opt:
       - apparmor:unconfined
     volumes: # volumes allow persistent data on the host
-      - ./knowledge_db:/var/lib/postgresql/10/main
       - ./projects:/home/bwi-docker/projects
       - ./base_env:/home/bwi-docker/base_env
     # give the container access to the host's network

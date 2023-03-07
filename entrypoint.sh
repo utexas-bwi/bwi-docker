@@ -21,9 +21,5 @@ fi
 
 source /opt/ros/melodic/setup.bash
 
-#start postgres
-sudo chown postgres:postgres /var/lib/postgresql/10/main
-# sudo /etc/init.d/postgresql start
-
 #start ros
 roscore
