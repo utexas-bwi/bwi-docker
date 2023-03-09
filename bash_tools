@@ -3,7 +3,7 @@ bwi-start(){
     echo "added docker xhost permissions"
     export UID_GID=$(id -u):$(id -g)
     echo "exported uids"
-    docker compose up
+    docker compose up -d
     #echo "container started in background"
 }
 

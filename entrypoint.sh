@@ -19,6 +19,12 @@ sed -i '/source \/opt\/ros\/melodic\/setup.bash/a \
 source '$ws'\/devel\/setup.bash' /home/bwi-docker/.bashrc
 fi
 
+cat > ~/.pgpass <<EOF
+# hostname:port:database:username:password
+localhost:*:knowledge_base:postgres:nopass
+EOF
+chmod 600 ~/.pgpass
+
 source /opt/ros/melodic/setup.bash
 
 #start ros
