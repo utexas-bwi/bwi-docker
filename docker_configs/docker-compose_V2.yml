@@ -4,7 +4,6 @@ services:
   bwi_system_s:
     runtime: nvidia
     image: bwi_system_i
-    user: $UID_GID
     group_add:
       - dialout
     build:
