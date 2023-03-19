@@ -1,30 +1,30 @@
 bwi-start(){
-    xhost +si:localuser:root
-    echo "added docker xhost permissions"
-    export UID_GID=$(id -u):$(id -g)
-    echo "exported uids"
-    docker compose up -d
-    #echo "container started in background"
+    xhost +local:podman@
+    echo "added podman xhost permissions"
+    podman-compose up -d
+if [ $?=0 ]; then
+    echo "Opening shell inside started container..."
+    podman exec -ti bwi_system_c bash -l; else
+    echo "There were errors starting container.";
+fi
 }
 
 bwi-stop(){
-    docker compose down
+    podman-compose down
 }
 
 bwi-shell() {
-    docker exec -ti bwi_system_c bash -l
+    podman exec -ti bwi_system_c bash -l
 }
 
 bwi-build() {
-    export UID_GID=$(id -u):$(id -g)
-    echo "using user:group $UID_GID"
-    docker compose build
+    podman-compose --podman-build-args='--format docker' build
 }
 
 bwi-ws() {
     if [ $1 == "clear" ]; then \
     export WORKSPACE=; else \
-    export WORKSPACE=/home/bwi-docker/$1; fi
+    export WORKSPACE=/root/projects/$1; fi
 }
 
 postgres_pw_setup() {

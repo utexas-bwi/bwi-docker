@@ -1,4 +1,4 @@
-This package enables the BWI code stack on machines running Ubuntu 20.04.03 LTS+.  It creates a Docker image and container that can control a BWIbot V2 or V4.
+This package enables the BWI code stack on machines running Ubuntu 20.04.03 LTS+.  It creates a Podman image and container that can control a BWIbot V2 or V4.
 
 ### Table of Contents
 
@@ -16,22 +16,21 @@ This package enables the BWI code stack on machines running Ubuntu 20.04.03 LTS+
 
 ## Requirements
 
-- Ubuntu OS
+- Ubuntu 20.10+
 - NVIDIA graphics card and drivers
-- [Docker](https://docs.docker.com/engine/install/ubuntu/)
-- Docker Compose v2 Plugin (installed with Docker document above)
-- [Nvidia Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker)
+- [podman 3.4.4+](https://podman.io/getting-started/installation)
+- [podman-compose](https://phoenixnap.com/kb/podman-compose)
+- [Nvidia Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html)
 
 This package is designed for use with Ubuntu OS and systems having NVIDIA graphics cards using NVIDIA drivers.  Verify whether you have NVIDIA drivers loaded with the command `nvidia-smi`.  If you do not, it will return an error.  This article describes a verified method of installing Nvidia drivers on Ubuntu under the heading [Install Nvidia Driver Using GUI](https://phoenixnap.com/kb/install-nvidia-drivers-ubuntu).  Do not forget to register the MOK on reboot (this option will appear in BIOS before the OS loads), otherwise the drivers will not be allowed to load.
 
 ## Install
 
-Clone the repo into a useful directory, eg `~/<your user>/`.  Checkout the "system_only" branch.
+Clone the repo into a useful directory, eg `~/` and checkout the "podman" branch.
 ```
-git clone --branch system_only https://github.com/utexas-bwi/bwi-docker.git
+git clone --branch podman https://github.com/utexas-bwi/bwi-docker.git
 ```
-The rest of this setup assumes there is already a docker image called `bwi_system_i` on your system.  For build instructions, see the bottom of this page.
-
+The rest of this setup assumes there is already a podman image called `bwi_system_i` on your system.  For build instructions, see the bottom of this page.  For setting up a machine with podman from scratch, see [podman_notes](podman_notes.md).
 
 ## Setup
 
@@ -68,9 +67,9 @@ Optional commands:
 
 Source a workspace from the image ~/.bashrc and ~/.profile:
 
-Before starting a container, you can add sourcing of an existing catkin workspace by updating the `$WORKSPACE` variable.  Provide the relative path only from inside the `bwi-docker` directory.  Presently only one workspace can be added this way:
+Before starting a container, you can add sourcing of an existing catkin workspace by updating the `$WORKSPACE` variable.  Provide the relative path only from inside the `bwi-docker/projects` directory.  Presently only one workspace can be added this way:
 ```
-bwi-ws projects/<workspace_directory>
+bwi-ws <workspace_directory>
 ```
 Clear this value with
 ```
@@ -85,8 +84,6 @@ Only changes under the following directories will persist after a container is c
 | --- | --- |
 | `projects` | **put catkin workspaces and other dev files in this directory** |
 | `base_env` | a place for keeping robot-specific environment variables |
-| `knowledge_db` | do not edit - the database files for `bwi_knowledge_representation`, which is managed by postgres |
-
 
 ## Run ROS and the BWI codebase
 
@@ -97,7 +94,6 @@ In the Docker container shell you can run ROS commands.
 Start a container and open a shell in it:
 ```
 bwi-start
-bwi-shell
 ```
 
 Make a catkin_ws under the "projects" directory:
@@ -129,7 +125,7 @@ Commands should be run in a shell inside the continer.  which you can open in a 
 bwi-shell
 ```
 
-When finished, `exit` to exit the container bash session, and then stop and remove the docker resources with:
+When finished, type `exit` to exit the container bash session, and then stop and remove the docker resources with:
 ```
 bwi-stop
 ```
@@ -138,12 +134,11 @@ bwi-stop
 
 A development directory called `projects` persists on the host when a docker container is closed.  ROS Melodic workspaces can be added to this directory and built from inside the container.  Their contents will persist after the container is closed.
 
+You can make changes to the docker-compose.yml file if needed, and they will be integrated on container start.
+
 ### Build a new image (not necessary on configured robots)
 
-From inside the `bwi-docker` directory, build the Docker image:
+Creating an image for the first time, or from a new Dockerfile, requires building the image.  From inside the `bwi-docker` directory, build the Docker image with:
 ```
-docker compose build
-
-# or if bash tools have been setup (see Setup)
 bwi-build
 ```

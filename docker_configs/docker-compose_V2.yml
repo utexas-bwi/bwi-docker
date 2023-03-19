@@ -20,9 +20,11 @@ services:
     # this is set bc of errors with RViz being denied dbus comm w/ host
     security_opt:
       - apparmor:unconfined
+    working_dir: /root/projects
     volumes: # volumes allow persistent data on the host
-      - ./projects:/home/bwi-docker/projects
-      - ./base_env:/home/bwi-docker/base_env
+      - ./projects:/root/projects:Z
+      - ./base_env:/root/base_env:Z
+      - /tmp/.X11-unix:/tmp/.X11-unix:ro
     # give the container access to the host's network
     network_mode: host
     # these usb device names are defined on the host using udev rules
@@ -31,4 +33,4 @@ services:
       - /dev/ttyUSB0:/dev/ttyUSB0
       # - /dev/segway_rmp:/dev/segway_rmp
       # - /dev/kinect:/dev/kinect
-    entrypoint: ./entrypoint.sh -w ${WORKSPACE}
+    entrypoint: /entrypoint.sh -w ${WORKSPACE}
