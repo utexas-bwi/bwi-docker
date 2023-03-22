@@ -21,8 +21,9 @@ services:
     security_opt:
       - apparmor:unconfined
     volumes: # volumes allow persistent data on the host
-      - ./projects:/home/bwi-docker/projects
-      - ./base_env:/home/bwi-docker/base_env
+      - ./projects:/root/projects
+      - ./base_env:/root/base_env
+    working_dir: /root/projects
     # give the container access to the host's network
     network_mode: host
     # these usb device names are defined on the host using udev rules
