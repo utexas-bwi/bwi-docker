@@ -3,10 +3,17 @@
 set -e
 
 echo "in the entrypoint script"
-while getopts w: flag
-do
+while getopts :w:u:n: flag; do
     case "${flag}" in
-        w) ws=${OPTARG};;
+        w)
+          ws=${OPTARG}
+          ;;
+        u)
+          userid=${OPTARG}
+          ;;
+        n)
+          uname=${OPTARG}
+          ;;
     esac
 done
 
@@ -14,10 +21,16 @@ done
 if [ -n "$ws" ]; then
 echo "updating ~/.profile and ~/.bashrc with workspace path"
 sed -i '/source \/opt\/ros\/melodic\/setup.bash/a \
-source '$ws'\/devel\/setup.bash' /home/bwi-docker/.profile
+source '$ws'\/devel\/setup.bash' /root/.profile
 sed -i '/source \/opt\/ros\/melodic\/setup.bash/a \
-source '$ws'\/devel\/setup.bash' /home/bwi-docker/.bashrc
+source '$ws'\/devel\/setup.bash' /root/.bashrc
 fi
+
+# get host user and ensure they own the projects dir
+echo "setting projects volume owner to $uname $userid"
+export uid=${userid%"${userid#????}"}
+useradd -u $uid -s /bin/bash -G dialout $uname
+chown -R $userid /root/projects
 
 cat > ~/.pgpass <<EOF
 # hostname:port:database:username:password

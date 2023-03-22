@@ -2,7 +2,8 @@ bwi-start(){
     xhost +si:localuser:root
     echo "added docker xhost permissions"
     export UID_GID=$(id -u):$(id -g)
-    echo "exported uids"
+    export UNAME=$(whoami)
+    echo "gathering host user info"
     docker compose up -d
     #echo "container started in background"
 }
@@ -16,15 +17,13 @@ bwi-shell() {
 }
 
 bwi-build() {
-    export UID_GID=$(id -u):$(id -g)
-    echo "using user:group $UID_GID"
     docker compose build
 }
 
 bwi-ws() {
     if [ $1 == "clear" ]; then \
     export WORKSPACE=; else \
-    export WORKSPACE=/home/bwi-docker/$1; fi
+    export WORKSPACE=/root/projects/$1; fi
 }
 
 postgres_pw_setup() {

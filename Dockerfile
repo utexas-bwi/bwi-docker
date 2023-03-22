@@ -20,14 +20,8 @@ RUN apt-get update &&\
     pip install -U pyYAML &&\
     rosdep init
 
-# setup the non-root user
-ENV USERNAME bwi-docker
-RUN useradd --create-home --shell /bin/bash ${USERNAME} &&\
-    usermod --append --groups sudo,dialout ${USERNAME} &&\
-    # give permission to run sudo w/ out pw prompts
-    echo "${USERNAME} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
-USER $USERNAME
-WORKDIR /home/$USERNAME
+# switch to home dir
+WORKDIR /root
 
 # install bwi dependencies
 RUN source /opt/ros/melodic/setup.bash &&\
@@ -35,11 +29,8 @@ RUN source /opt/ros/melodic/setup.bash &&\
     mkdir -p tmp_ws/src &&\
     cd tmp_ws &&\
     wstool init src https://raw.githubusercontent.com/utexas-bwi/bwi/master/rosinstall/melodic.rosinstall &&\
-    rosdep install --from-paths src --ignore-src --rosdistro melodic -y
-
-USER $USERNAME
-WORKDIR /home/$USERNAME
-RUN rm -r tmp_ws
+    rosdep install --from-paths src --ignore-src --rosdistro melodic -y &&\
+    cd /root && rm -r tmp_ws
 
 # setup amrl messages
 RUN git clone https://github.com/ut-amrl/amrl_msgs.git
@@ -55,6 +46,6 @@ source /opt/ros/melodic/setup.bash\n\
 export ROS_PACKAGE_PATH=\$ROS_PACKAGE_PATH:~/amrl_msgs" >> ~/.bashrc
 
 # copy the entrypoint into the image
-COPY ./entrypoint.sh ./entrypoint.sh
+COPY ./entrypoint.sh /entrypoint.sh
 # run this script on startup
-ENTRYPOINT ./entrypoint.sh
+ENTRYPOINT /entrypoint.sh

@@ -4,7 +4,6 @@ services:
   bwi_system_s:
     runtime: nvidia
     image: bwi_system_i
-    user: $UID_GID
     group_add:
       - dialout
     build:
@@ -27,9 +26,9 @@ services:
     # give the container access to the host's network
     network_mode: host
     # these usb device names are defined on the host using udev rules
-    devices:
-      - /dev/hokuyo:/dev/hokuyo
-      - /dev/ttyUSB0:/dev/ttyUSB0
+    #devices:
+      #- /dev/hokuyo:/dev/hokuyo
+      #- /dev/ttyUSB0:/dev/ttyUSB0
       # - /dev/segway_rmp:/dev/segway_rmp
       # - /dev/kinect:/dev/kinect
-    entrypoint: ./entrypoint.sh -w ${WORKSPACE}
+      entrypoint: /entrypoint.sh -w "$WORKSPACE" -u "$UID_GID" -n "$UNAME"
