@@ -68,9 +68,9 @@ Optional commands:
 
 Source a workspace from the image ~/.bashrc and ~/.profile:
 
-Before starting a container, you can add sourcing of an existing catkin workspace by updating the `$WORKSPACE` variable.  Provide the relative path only from inside the `bwi-docker` directory.  Presently only one workspace can be added this way:
+Before starting a container, you can add sourcing of an existing catkin workspace by updating the `$WORKSPACE` variable.  Provide the relative path only from inside the `bwi-docker/projects` directory.  Presently only one workspace can be added this way:
 ```
-bwi-ws projects/<workspace_directory>
+bwi-ws <workspace_directory>
 ```
 Clear this value with
 ```
@@ -85,7 +85,6 @@ Only changes under the following directories will persist after a container is c
 | --- | --- |
 | `projects` | **put catkin workspaces and other dev files in this directory** |
 | `base_env` | a place for keeping robot-specific environment variables |
-| `knowledge_db` | do not edit - the database files for `bwi_knowledge_representation`, which is managed by postgres |
 
 
 ## Run ROS and the BWI codebase
