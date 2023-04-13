@@ -48,7 +48,7 @@ RUN apt-get -y install libk4a1.4 libk4a1.4-dev k4a-tools
 RUN wget https://raw.githubusercontent.com/microsoft/Azure-Kinect-Sensor-SDK/develop/scripts/99-k4a.rules -O /etc/udev/rules.d/99-k4a.rules
 
 RUN apt-get update
-RUN apt-get install software-properties-common
+RUN apt-get -y install software-properties-common
 
 #https://raw.githubusercontent.com/chakio/azure_kinect_ros/devel/Dockerfile
 #######################################################################
