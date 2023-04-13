@@ -3,9 +3,8 @@ bwi-start(){
     echo "added docker xhost permissions"
     export UID_GID=$(id -u):$(id -g)
     export UNAME=$(whoami)
-    echo "gathering host user info"
+    echo "gathering host user info... $UNAME $UID_GID"
     docker compose up -d
-    #echo "container started in background"
 }
 
 bwi-stop(){

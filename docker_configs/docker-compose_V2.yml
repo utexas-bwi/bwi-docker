@@ -23,6 +23,7 @@ services:
     volumes: # volumes allow persistent data on the host
       - ./projects:/root/projects
       - ./base_env:/root/base_env
+      - /tmp/.X11-unix:/tmp/.X11-unix
     working_dir: /root/projects
     # give the container access to the host's network
     network_mode: host
@@ -30,6 +31,4 @@ services:
     devices:
       - /dev/hokuyo:/dev/hokuyo
       - /dev/ttyUSB0:/dev/ttyUSB0
-      # - /dev/segway_rmp:/dev/segway_rmp
-      # - /dev/kinect:/dev/kinect
     entrypoint: /entrypoint.sh -w "$WORKSPACE" -u "$UID_GID" -n "$UNAME"
