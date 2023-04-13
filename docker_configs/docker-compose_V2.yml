@@ -1,0 +1,34 @@
+version: "3"
+
+services:
+  bwi_system_s:
+    runtime: nvidia
+    image: bwi_system_i
+    group_add:
+      - dialout
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    env_file:
+      - base_env/v2_env
+    environment:
+      - DISPLAY=${DISPLAY}
+      - NVIDIA_DRIVER_CAPABILITIES=all
+      - NVIDIA_VISIBLE_DEVICES=all
+      - QT_X11_NO_MITSHM=1
+    container_name: bwi_system_c
+    # this is set bc of errors with RViz being denied dbus comm w/ host
+    security_opt:
+      - apparmor:unconfined
+    volumes: # volumes allow persistent data on the host
+      - ./projects:/root/projects
+      - ./base_env:/root/base_env
+      - /tmp/.X11-unix:/tmp/.X11-unix
+    working_dir: /root/projects
+    # give the container access to the host's network
+    network_mode: host
+    # these usb device names are defined on the host using udev rules
+    devices:
+      - /dev/hokuyo:/dev/hokuyo
+      - /dev/ttyUSB0:/dev/ttyUSB0
+    entrypoint: /entrypoint.sh -w "$WORKSPACE" -u "$UID_GID" -n "$UNAME"

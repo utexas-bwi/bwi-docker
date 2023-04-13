@@ -1,0 +1,34 @@
+bwi-start(){
+    xhost +si:localuser:root
+    echo "added docker xhost permissions"
+    export UID_GID=$(id -u):$(id -g)
+    export UNAME=$(whoami)
+    echo "gathering host user info... $UNAME $UID_GID"
+    docker compose up -d
+}
+
+bwi-stop(){
+    docker compose down
+}
+
+bwi-shell() {
+    docker exec -ti bwi_system_c bash -l
+}
+
+bwi-build() {
+    docker compose build
+}
+
+bwi-ws() {
+    if [ $1 == "clear" ]; then \
+    export WORKSPACE=; else \
+    export WORKSPACE=/root/projects/$1; fi
+}
+
+postgres_pw_setup() {
+    cat > ~/.pgpass <<EOF
+# hostname:port:database:username:password
+localhost:*:knowledge_base:postgres:nopass
+EOF
+    chmod 600 ~/.pgpass
+}
