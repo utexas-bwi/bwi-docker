@@ -27,11 +27,11 @@ This package is designed for use with Ubuntu OS and systems having NVIDIA graphi
 
 ## Install
 
-Clone the repo into a useful directory, eg `~/<your user>/`.  Checkout the "system_only" branch.
+Clone the repo into a useful directory, eg `~/<your user>/`.
 ```
-git clone --branch system_only https://github.com/utexas-bwi/bwi-docker.git
+git clone https://github.com/utexas-bwi/bwi-docker.git
 ```
-The rest of this setup assumes there is already a docker image called `bwi_system_i` on your system.  For image build instructions, see the bottom of this page.
+The rest of this setup assumes there is already a docker image called `bwi_system_i` on your system.  If you are installing on a new robot or computer, you will need to build the image before proceeding.  For image build instructions, see the bottom of this page.
 
 
 ## Setup
@@ -150,3 +150,5 @@ docker compose build
 # or if bash tools have been setup (see Setup)
 bwi-build
 ```
+
+The visit doors demo relies on a postgres SQL server and database.  This is preinstalled on configured robots, but on new machines, you will need to set them up using [postgres_docker](https://github.com/utexas-bwi/postgres_docker).
