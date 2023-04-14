@@ -141,7 +141,7 @@ A development directory called `projects` persists on the host when a docker con
 
 It is best to manage files from the host, and use the container for building and running code.  This is why you are instructed to use `vcstool` to clone git repositories onto the host machine, rather than inside the container.
 
-# Build a new image (not necessary on configured robots)
+## Build a new image (not necessary on configured robots)
 
 From inside the `bwi-docker` directory, build the Docker image:
 ```
