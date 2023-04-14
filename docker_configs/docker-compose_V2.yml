@@ -36,6 +36,4 @@ services:
       - /dev/kinect/rgba:/dev/kinect/rgba
       - /dev/kinect/mic:/dev/kinect/mic
       - /dev/kinect/depth:/dev/kinect/depth
-      # - /dev/segway_rmp:/dev/segway_rmp
-      # - /dev/kinect:/dev/kinect
     entrypoint: /entrypoint.sh -w "$WORKSPACE" -u "$UID_GID" -n "$UNAME"
