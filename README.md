@@ -67,26 +67,24 @@ Optional commands:
 | `bwi-build ` | Build the container image (admin only) | **Run from project directory `bwi-docker`** |
 
 
-Source a workspace from the image ~/.bashrc and ~/.profile:
+Persistent Data:
 
-Before starting a container, you can add sourcing of an existing catkin workspace by updating the `$WORKSPACE` variable.  Provide the relative path only from inside the `bwi-docker/projects` directory.  Presently only one workspace can be added this way:
-```
-bwi-ws <workspace_directory>
-```
-Clear this value with
-```
-bwi-ws clear
-```
-
-## Development and Persistent Data
-
-Only changes under the following directories will persist after a container is closed.
+Only changes under the following directories will persist after a container is removed.
 
 | directory | purpose and usage |
 | --- | --- |
 | `projects` | **put catkin workspaces and other dev files in this directory** |
 | `base_env` | a place for keeping robot-specific environment variables |
 
+
+Before starting a container, you can add sourcing of an existing catkin workspace when opening a container shell by updating the host `$WORKSPACE` variable.  Provide the relative path from inside the `bwi-docker/projects` directory.  Presently only one workspace can be added this way:
+```
+bwi-ws catkin_ws
+```
+Clear this value with
+```
+bwi-ws clear
+```
 
 ## Run ROS and the BWI codebase
 
