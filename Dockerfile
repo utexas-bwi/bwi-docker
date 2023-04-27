@@ -106,6 +106,8 @@ RUN apt-get update && apt-get install -y \
     x11-apps && \
     rm -rf /var/lib/apt/lists/*
 
+RUN apt-get update && apt-get install -y synaptic 
+
     
 
 #######################################################################
@@ -113,6 +115,8 @@ RUN apt-get update && apt-get install -y \
 #######################################################################
 
 RUN apt-get update && apt-get install -y libgtk-3-dev libceres-dev ddd
+
+RUN apt-get install -y libglfw3-dev
 
 # setup .bashrc
 SHELL ["/bin/bash", "-l", "-c"]
