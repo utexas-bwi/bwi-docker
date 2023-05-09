@@ -104,6 +104,7 @@ vcs import --recursive --input https://raw.githubusercontent.com/utexas-bwi/bwi/
 
 Start a container and open a shell in it:
 ```
+cd ../../../
 bwi-start
 bwi-shell
 ```
