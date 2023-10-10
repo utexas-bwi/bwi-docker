@@ -24,6 +24,7 @@ services:
       - ./projects:/root/projects
       - ./base_env:/root/base_env
       - /tmp/.X11-unix:/tmp/.X11-unix
+      - ${HOME}/.Xauthority:/root/.Xauthority:rw
     working_dir: /root/projects
     # give the container access to the host's network
     network_mode: host
